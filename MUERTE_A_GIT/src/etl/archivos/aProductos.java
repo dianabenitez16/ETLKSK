@@ -10,6 +10,8 @@ import etl.etl;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,10 +91,10 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             deposito = Integer.valueOf(tDeposito.getText().trim());
         }
         
-        query =   "select itm_cod, itm_des, itm_pr1, itm_pr4, itm_act, ppd_act "
+        query =   "select itm_cod as Codigo, itm_des as Descripcion, itm_pr1 as Venta, itm_pr4 as Costo, itm_act as StockTotal, ppd_act as StockSucursal "
                 + "from productos inner join existencias_por_deposito on itm_cod = ppd_itm "
                 + "where ppd_dep = " + deposito +" and ppd_act >= "+cantidadMinima;
-               
+               // new String [] { "Codigo", "Descripcion", "Venta", "Costo", "Stock Total", "Stock Suc." }
         
         SWDVY.consultar(query);
         SWDVY.consultar.addPropertyChangeListener(this);
@@ -105,12 +107,39 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     }
     
     public void procesarDatos(){
-                
-        tProductos.setModel(new javax.swing.table.DefaultTableModel(
-            SWDVY.consultar.datatypes,
-            new String [] {
-                "Codigo", "Descripcion", "Venta", "Costo", "Stock Total", "Stock Suc."
+        Integer registros = 0;
+        List<String> anhos = Arrays.asList(lAnho.getText().split(","));
+        
+        //SE DEBERIA DE OPTIMIZAR ESTE CODIGO
+        for (Object[] datatype : SWDVY.consultar.datatypes) {
+            for (String anho : anhos) {
+                if(datatype[0].toString().substring(0, 2).contains(anho) && datatype[0].toString().trim().length() == 13){
+                    registros++;
+                }
             }
+        }
+        
+        Object[][] datosProcesados = new Object[registros][SWDVY.consultar.datatypes[0].length];
+        registros = 0;
+        
+        for (Object[] datatype : SWDVY.consultar.datatypes) {
+            for (String anho : anhos) {
+                if(datatype[0].toString().substring(0, 2).contains(anho) && datatype[0].toString().trim().length() == 13){
+                    datosProcesados[registros] = datatype;
+                    registros++;
+                }
+            }
+        }
+        
+        
+        
+        
+        
+        tProductos.setModel(new javax.swing.table.DefaultTableModel(
+            //SWDVY.consultar.datatypes,
+            datosProcesados,
+            SWDVY.consultar.encabezado[0]
+            // new String [] { "Codigo", "Descripcion", "Venta", "Costo", "Stock Total", "Stock Suc." }
         ));
 
         

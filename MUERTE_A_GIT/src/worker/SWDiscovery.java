@@ -6,14 +6,11 @@
 package worker;
 
 import java.awt.Color;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
@@ -91,6 +88,7 @@ public class SWDiscovery {
         List<String> registro;
         
         public Object[][] datatypes;
+        public String[][] encabezado;
         public String tabla;
         public String proceso;
         
@@ -134,15 +132,16 @@ public class SWDiscovery {
                 resultado = sentencia.executeQuery(query);
                 ancho = resultado.getMetaData().getColumnCount();
                 
-                datatypes = new Object[largo+1][ancho];
-                
+                encabezado = new String[1][ancho];
+                datatypes = new Object[largo][ancho];
+                                
                 for (int i = 1; i <= ancho; i++) {
-                    datatypes[0][i-1] = resultado.getMetaData().getColumnLabel(i);
+                    encabezado[0][i-1] = resultado.getMetaData().getColumnLabel(i);
                 }
                 
                 while (resultado.next()) {
                     for (int i = 0; i < ancho; i++) {
-                        datatypes[resultado.getRow()][i] = resultado.getObject(i+1);
+                        datatypes[resultado.getRow()-1][i] = resultado.getObject(i+1);
                     }
                     publish("Procesando consulta "+ resultado.getRow()*100/largo + "%");
                     //publish("Procesando registro "+ resultado.getRow());

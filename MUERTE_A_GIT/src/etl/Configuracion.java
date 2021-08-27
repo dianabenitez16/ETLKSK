@@ -61,12 +61,12 @@ public class Configuracion {
                     prop.setProperty("deposito", "1");
                     prop.setProperty("cantidadMinima", "1");
                     prop.setProperty("anhos", "20,21,22,23,24,25");
-                    prop.setProperty("procedencia", "");
-                    prop.setProperty("tipo", "");
-                    prop.setProperty("nombre", "");
-                    prop.setProperty("blue", "");
-                    prop.setProperty("sexo", "");
-                    prop.setProperty("tamanho", "");
+                    prop.setProperty("procedencias", "");
+                    prop.setProperty("tipos", "");
+                    prop.setProperty("nombres", "");
+                    prop.setProperty("colores", "");
+                    prop.setProperty("sexos", "");
+                    prop.setProperty("tamanhos", "");
                     break;
                 default:
                     break;

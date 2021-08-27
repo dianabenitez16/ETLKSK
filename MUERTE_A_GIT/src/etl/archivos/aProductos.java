@@ -5,18 +5,29 @@
  */
 package etl.archivos;
 
+import clases.Categoria;
 import etl.Configuracion;
 import etl.etl;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.TableModel;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import system.Consola;
 import system.JColor;
 import worker.SWDiscovery;
@@ -38,6 +49,11 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     Integer cantidadMinima;
     Integer deposito;
     
+    File maestroProductos;
+    File maestroCategorias;
+    
+    private Categoria categorias[];
+    
     public aProductos(etl etl) {
         initComponents();
         SWDVY = new SWDiscovery(eMensaje);
@@ -53,12 +69,12 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             tDeposito.setText(configuracion.getProperty("deposito"));
             tCantidadMinima.setText(configuracion.getProperty("cantidadMinima"));
             lAnho.setText(configuracion.getProperty("anhos"));
-            lProcedencia.setText(configuracion.getProperty("procedencia"));
-            lTipo.setText(configuracion.getProperty("tipo"));
-            lNombre.setText(configuracion.getProperty("nombre"));
-            lColor.setText(configuracion.getProperty("color"));
-            lSexo.setText(configuracion.getProperty("sexo"));
-            lTamanho.setText(configuracion.getProperty("tamanho"));
+            lProcedencia.setText(configuracion.getProperty("procedencias"));
+            lTipo.setText(configuracion.getProperty("tipos"));
+            lNombre.setText(configuracion.getProperty("nombres"));
+            lColor.setText(configuracion.getProperty("colores"));
+            lSexo.setText(configuracion.getProperty("sexos"));
+            lTamanho.setText(configuracion.getProperty("tamanhos"));
             
             
             error += lAnho.getText().trim() == null ? "anhos": "";
@@ -107,27 +123,104 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     }
     
     public void procesarDatos(){
+        Boolean bandera = false;
         Integer registros = 0;
-        List<String> anhos = Arrays.asList(lAnho.getText().split(","));
+        
+        Object[][] datosEnProceso = new Object[SWDVY.consultar.datatypes.length][SWDVY.consultar.datatypes[0].length];
+        Object[][] datosProcesados;
+        
+        List<String> anhos =        Arrays.asList(lAnho.getText().split(","));
+        List<String> procedencias =  Arrays.asList(lProcedencia.getText().split(","));
+        List<String> tipos =         Arrays.asList(lTipo.getText().split(","));
+        List<String> nombres =       Arrays.asList(lNombre.getText().split(","));
+        List<String> colores =        Arrays.asList(lColor.getText().split(","));
+        List<String> sexos =         Arrays.asList(lSexo.getText().split(","));
+        List<String> tamanhos =      Arrays.asList(lTamanho.getText().split(","));
         
         //SE DEBERIA DE OPTIMIZAR ESTE CODIGO
+        
         for (Object[] datatype : SWDVY.consultar.datatypes) {
-            for (String anho : anhos) {
-                if(datatype[0].toString().substring(0, 2).contains(anho) && datatype[0].toString().trim().length() == 13){
+            if(datatype[0].toString().trim().length() == 13){
+                //BANDERA AÑO
+                if(anhos.size() > 0){
+                    for (String registro : anhos) {
+                        if(datatype[0].toString().substring(0, 2).contains(registro)){
+                            bandera = true;
+                        }
+                    }
+                }
+
+                //BANDERA PROCEDENCIA
+                if(procedencias.size() > 0 && bandera){
+                    for (String registro : procedencias) {
+                        if(datatype[0].toString().substring(2, 4).contains(registro)){
+                            bandera = true;
+                        }
+                    }
+                }
+                
+                //BANDERA TIPO
+                if(tipos.size() > 0 && bandera){
+                    for (String registro : tipos) {
+                        if(datatype[0].toString().substring(4, 6).contains(registro)){
+                            bandera = true;
+                        }
+                    }
+                }
+                
+                //BANDERA NOMBRE
+                if(nombres.size() > 0 && bandera){
+                    for (String registro : nombres) {
+                        if(datatype[0].toString().substring(6, 8).contains(registro)){
+                            bandera = true;
+                        }
+                    }
+                }
+                
+                //BANDERA COLOR
+                if(colores.size() > 0 && bandera){
+                    for (String registro : colores) {
+                        if(datatype[0].toString().substring(8, 10).contains(registro)){
+                            bandera = true;
+                        }
+                    }
+                }
+                
+                //BANDERA SEXO
+                if(sexos.size() > 0 && bandera){
+                    for (String registro : sexos) {
+                        if(datatype[0].toString().substring(10, 11).contains(registro)){
+                            bandera = true;
+                        }
+                    }
+                }
+                
+                //BANDERA TAMANHO
+                if(tamanhos.size() > 0 && bandera){
+                    for (String registro : tamanhos) {
+                        if(datatype[0].toString().substring(11, 13).contains(registro)){
+                            bandera = true;
+                        }
+                    }
+                }
+
+                if(bandera){
+                    datosEnProceso[registros] = datatype;
                     registros++;
                 }
             }
         }
         
-        Object[][] datosProcesados = new Object[registros][SWDVY.consultar.datatypes[0].length];
+        
+        
+        datosProcesados = new Object[registros][SWDVY.consultar.datatypes[0].length];
         registros = 0;
         
-        for (Object[] datatype : SWDVY.consultar.datatypes) {
-            for (String anho : anhos) {
-                if(datatype[0].toString().substring(0, 2).contains(anho) && datatype[0].toString().trim().length() == 13){
-                    datosProcesados[registros] = datatype;
-                    registros++;
-                }
+        //LIMPIEZA DE ARRAY
+        for (Object[] registro : datosEnProceso) {
+            if(registro[0] != null){
+                datosProcesados[registros] = registro;
+                registros++;
             }
         }
         
@@ -157,6 +250,102 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         
         
     }
+    
+    public File seleccionarArchivo(){
+        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        /* Se desactiva la opcion de tipo de archivo "Todos los archivos" */
+        jfc.setAcceptAllFileFilterUsed(false);
+        /* Se establece los tipos de archivos permitidos. */
+        FileNameExtensionFilter filtro=new FileNameExtensionFilter("Planilla Excel (*.xlsx,)", "xlsx");
+        jfc.setFileFilter(filtro);
+
+        int returnValue = jfc.showOpenDialog(null);
+        // int returnValue = jfc.showSaveDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            return jfc.getSelectedFile();
+            
+        }
+        
+        return null;
+    }
+    
+    public void procesarArchivoCategorias(File archivo){
+        FileInputStream inputStream = null;
+        int cantCategorias = 0;
+        int cantCategoriasValidas = 0;
+        boolean categoriaValida;
+            
+        try {
+            String excelFilePath = archivo.getAbsolutePath();
+            inputStream = new FileInputStream(new File(excelFilePath));
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+            
+            categorias = new Categoria[sheet.getPhysicalNumberOfRows()];
+            Iterator<Row> rowIterator = sheet.iterator();
+            Iterator<Cell> cellIterator;
+            Categoria categoria;
+
+            while (rowIterator.hasNext()) {
+                Row nextRow = rowIterator.next();
+                cellIterator = nextRow.cellIterator();
+                categoria = new Categoria();
+                categoriaValida = false;
+
+                if(nextRow.getRowNum() > 1){
+                    while (cellIterator.hasNext()) {
+                        Cell cell = cellIterator.next();
+
+                        switch (cell.getColumnIndex()){
+                            case 0:
+                                categoria.setID(cell.getStringCellValue());
+                                break;
+                            case 1:
+                                if(!cell.getStringCellValue().isEmpty() && cell.getStringCellValue().length() == 2){
+                                    categoriaValida = true;
+                                }
+                                categoria.setReferenciaExterna(cell.getStringCellValue());
+                                break;
+                            case 2:
+                                categoria.setNombre(cell.getStringCellValue());
+                                break;
+                            default:
+                                System.out.println("Numero de columna no esperada.");
+                                break;
+                        }
+                    }
+
+                    if (categoriaValida){
+                        categorias[cantCategoriasValidas] = categoria;
+                        cantCategoriasValidas++;
+                        //categoria.imprimir();
+                    }
+                    cantCategorias++;
+                }
+            } 
+
+            if(cantCategoriasValidas > 0){
+                eMensaje.setText("Se cargaron "+cantCategoriasValidas+" válidas de "+cantCategorias+" categorias encontradas.");
+                eMensaje.setForeground(Color.BLUE);
+            }else{
+                eMensaje.setText("No se encontraron categorias válidas, verifique las referencias externas.");
+                eMensaje.setForeground(Color.RED);
+            }
+            
+            workbook.close();
+            inputStream.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+    }
+    
+    public void procesarArchivoProductos(File archivo){
+        
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -173,7 +362,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         bExtraer = new javax.swing.JButton();
         spProductos = new javax.swing.JScrollPane();
         tProductos = new javax.swing.JTable();
-        eMensaje = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         tDeposito = new javax.swing.JTextField();
         jLabel19 = new javax.swing.JLabel();
@@ -195,6 +383,14 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         lSexo = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         lTamanho = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel18 = new javax.swing.JLabel();
+        tMaestroCategoriasEcommerce = new javax.swing.JTextField();
+        bSeleccionarMaestroCategorias = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
+        tMaestroProductos = new javax.swing.JTextField();
+        bSeleccionarMaestroProductos = new javax.swing.JButton();
+        eMensaje = new javax.swing.JLabel();
 
         setClosable(true);
         setTitle("Mantenimiento de productos");
@@ -221,8 +417,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         ));
         spProductos.setViewportView(tProductos);
 
-        eMensaje.setPreferredSize(new java.awt.Dimension(40, 25));
-
         jLabel17.setText("Depósito");
         jLabel17.setPreferredSize(new java.awt.Dimension(120, 25));
 
@@ -237,7 +431,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,9 +460,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tCantidadMinima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
-                .addComponent(spProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addComponent(eMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Importar", jPanel1);
@@ -416,20 +608,93 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lTamanho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(317, Short.MAX_VALUE))
+                .addContainerGap(281, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Filtros", jPanel2);
+
+        jLabel18.setText("Categorias eCommerce");
+        jLabel18.setPreferredSize(new java.awt.Dimension(120, 25));
+
+        tMaestroCategoriasEcommerce.setEditable(false);
+        tMaestroCategoriasEcommerce.setPreferredSize(new java.awt.Dimension(150, 25));
+
+        bSeleccionarMaestroCategorias.setText("Seleccionar");
+        bSeleccionarMaestroCategorias.setPreferredSize(new java.awt.Dimension(120, 25));
+        bSeleccionarMaestroCategorias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSeleccionarMaestroCategoriasActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setText("Productos");
+        jLabel20.setPreferredSize(new java.awt.Dimension(120, 25));
+
+        tMaestroProductos.setEditable(false);
+        tMaestroProductos.setPreferredSize(new java.awt.Dimension(150, 25));
+
+        bSeleccionarMaestroProductos.setText("Seleccionar");
+        bSeleccionarMaestroProductos.setPreferredSize(new java.awt.Dimension(120, 25));
+        bSeleccionarMaestroProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSeleccionarMaestroProductosActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tMaestroCategoriasEcommerce, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bSeleccionarMaestroCategorias, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(75, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tMaestroCategoriasEcommerce, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bSeleccionarMaestroCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(439, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Maestros", jPanel3);
+
+        eMensaje.setPreferredSize(new java.awt.Dimension(40, 25));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedPane1)
+            .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(eMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -439,9 +704,37 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         extraerDatos();
     }//GEN-LAST:event_bExtraerActionPerformed
 
+    private void bSeleccionarMaestroCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSeleccionarMaestroCategoriasActionPerformed
+        File archivo = seleccionarArchivo();
+        if(archivo != null){
+            maestroCategorias = archivo;
+            tMaestroCategoriasEcommerce.setText(maestroCategorias.getAbsolutePath());
+            procesarArchivoCategorias(maestroCategorias);
+        }else{
+            tMaestroCategoriasEcommerce.setText("");
+            eMensaje.setText("");
+            eMensaje.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_bSeleccionarMaestroCategoriasActionPerformed
+
+    private void bSeleccionarMaestroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSeleccionarMaestroProductosActionPerformed
+        File archivo = seleccionarArchivo();
+        if(archivo != null){
+            maestroProductos = archivo;
+            tMaestroProductos.setText(maestroProductos.getAbsolutePath());
+            procesarArchivoProductos(maestroProductos);
+        }else{
+            tMaestroProductos.setText("");
+            eMensaje.setText("");
+            eMensaje.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_bSeleccionarMaestroProductosActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bExtraer;
+    private javax.swing.JButton bSeleccionarMaestroCategorias;
+    private javax.swing.JButton bSeleccionarMaestroProductos;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel eMensaje;
     private javax.swing.JLabel jLabel1;
@@ -450,13 +743,16 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lAnho;
     private javax.swing.JLabel lColor;
@@ -468,6 +764,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JScrollPane spProductos;
     private javax.swing.JTextField tCantidadMinima;
     private javax.swing.JTextField tDeposito;
+    private javax.swing.JTextField tMaestroCategoriasEcommerce;
+    private javax.swing.JTextField tMaestroProductos;
     private javax.swing.JTable tProductos;
     // End of variables declaration//GEN-END:variables
 

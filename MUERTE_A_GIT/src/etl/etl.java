@@ -31,7 +31,7 @@ import system.Consola;
  * @author Juan Bogado
  */
 public class etl extends JFrame {
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
     
     public Properties configuracion;
     
@@ -197,6 +197,10 @@ public class etl extends JFrame {
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ETL: DISCV <> ODOO");
+
+        dp.setBackground(new java.awt.Color(255, 255, 255));
+        dp.setToolTipText("");
 
         javax.swing.GroupLayout dpLayout = new javax.swing.GroupLayout(dp);
         dp.setLayout(dpLayout);
@@ -307,7 +311,7 @@ public class etl extends JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }

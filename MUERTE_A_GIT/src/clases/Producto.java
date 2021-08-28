@@ -26,5 +26,4 @@ public class Producto {
     private String color;
     private String sexo;
     private String tamanho;
-    
 }

@@ -15,9 +15,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +35,9 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.TableModel;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import system.Consola;
 import system.JColor;
 import worker.SWDiscovery;
@@ -39,6 +49,8 @@ import worker.SWDiscovery.Consultar;
  */
 public class aProductos extends javax.swing.JInternalFrame implements PropertyChangeListener{
     public Properties configuracion;
+    
+    private XmlRpcClient odooCliente;
     
     SWDiscovery SWDVY;
     String query;
@@ -275,6 +287,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         int cantCategorias = 0;
         int cantCategoriasValidas = 0;
         boolean categoriaValida;
+        boolean archivoValido = false;
             
         try {
             String excelFilePath = archivo.getAbsolutePath();
@@ -286,34 +299,45 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             Iterator<Row> rowIterator = sheet.iterator();
             Iterator<Cell> cellIterator;
             Categoria categoria;
+            
 
             while (rowIterator.hasNext()) {
                 Row nextRow = rowIterator.next();
                 cellIterator = nextRow.cellIterator();
                 categoria = new Categoria();
                 categoriaValida = false;
+                
+                if(nextRow.getPhysicalNumberOfCells() == 3){
+                    archivoValido = true;
+                }
 
                 if(nextRow.getRowNum() > 1){
                     while (cellIterator.hasNext()) {
                         Cell cell = cellIterator.next();
-
-                        switch (cell.getColumnIndex()){
-                            case 0:
-                                categoria.setID(cell.getStringCellValue());
-                                break;
-                            case 1:
-                                if(!cell.getStringCellValue().isEmpty() && cell.getStringCellValue().length() == 2){
-                                    categoriaValida = true;
-                                }
-                                categoria.setReferenciaExterna(cell.getStringCellValue());
-                                break;
-                            case 2:
-                                categoria.setNombre(cell.getStringCellValue());
-                                break;
-                            default:
-                                System.out.println("Numero de columna no esperada.");
-                                break;
+                        
+                        try{
+                            switch (cell.getColumnIndex()){
+                                case 0:
+                                    categoria.setID(cell.getStringCellValue());
+                                    break;
+                                case 1:
+                                    if(!cell.getStringCellValue().isEmpty() && cell.getStringCellValue().length() == 2){
+                                        categoriaValida = true;
+                                    }
+                                    categoria.setReferenciaExterna(cell.getStringCellValue());
+                                    break;
+                                case 2:
+                                    categoria.setNombre(cell.getStringCellValue());
+                                    break;
+                                default:
+                                    System.out.println("Numero de columna no esperada.");
+                                    break;
+                            }
+                        }catch(IllegalStateException ex){
+                            eMensaje.setText("Error al procesar valores de la celda: ["+cell.getRowIndex()+"]["+cell.getColumnIndex()+"]");
                         }
+
+                        
                     }
 
                     if (categoriaValida){
@@ -329,7 +353,12 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 eMensaje.setText("Se cargaron "+cantCategoriasValidas+" válidas de "+cantCategorias+" categorias encontradas.");
                 eMensaje.setForeground(Color.BLUE);
             }else{
-                eMensaje.setText("No se encontraron categorias válidas, verifique las referencias externas.");
+                if(archivoValido){
+                    eMensaje.setText("No se encontraron categorias válidas, verifique las referencias externas.");
+                }else{
+                    eMensaje.setText("La cantidad de columnas no coincide con el formato requerido (3).");
+                }
+                
                 eMensaje.setForeground(Color.RED);
             }
             
@@ -366,6 +395,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         tDeposito = new javax.swing.JTextField();
         jLabel19 = new javax.swing.JLabel();
         tCantidadMinima = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel18 = new javax.swing.JLabel();
+        tMaestroCategoriasEcommerce = new javax.swing.JTextField();
+        bSeleccionarMaestroCategorias = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
+        tMaestroProductos = new javax.swing.JTextField();
+        bSeleccionarMaestroProductos = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -383,13 +419,10 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         lSexo = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         lTamanho = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel18 = new javax.swing.JLabel();
-        tMaestroCategoriasEcommerce = new javax.swing.JTextField();
-        bSeleccionarMaestroCategorias = new javax.swing.JButton();
-        jLabel20 = new javax.swing.JLabel();
-        tMaestroProductos = new javax.swing.JTextField();
-        bSeleccionarMaestroProductos = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        bOdooTest = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        taDebug = new javax.swing.JTextArea();
         eMensaje = new javax.swing.JLabel();
 
         setClosable(true);
@@ -406,13 +439,10 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
 
         tProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Codigo", "Descripcion", "Venta", "Costo", "StockTotal", "StockSucursal"
             }
         ));
         spProductos.setViewportView(tProductos);
@@ -450,7 +480,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bExtraer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -460,11 +490,78 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tCantidadMinima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
-                .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
+                .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Importar", jPanel1);
+        jTabbedPane1.addTab("Discovery", jPanel1);
+
+        jLabel18.setText("Categorias eCommerce");
+        jLabel18.setPreferredSize(new java.awt.Dimension(120, 25));
+
+        tMaestroCategoriasEcommerce.setEditable(false);
+        tMaestroCategoriasEcommerce.setPreferredSize(new java.awt.Dimension(150, 25));
+
+        bSeleccionarMaestroCategorias.setText("Seleccionar");
+        bSeleccionarMaestroCategorias.setPreferredSize(new java.awt.Dimension(120, 25));
+        bSeleccionarMaestroCategorias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSeleccionarMaestroCategoriasActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setText("Productos");
+        jLabel20.setPreferredSize(new java.awt.Dimension(120, 25));
+
+        tMaestroProductos.setEditable(false);
+        tMaestroProductos.setPreferredSize(new java.awt.Dimension(150, 25));
+
+        bSeleccionarMaestroProductos.setText("Seleccionar");
+        bSeleccionarMaestroProductos.setPreferredSize(new java.awt.Dimension(120, 25));
+        bSeleccionarMaestroProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSeleccionarMaestroProductosActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tMaestroCategoriasEcommerce, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bSeleccionarMaestroCategorias, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(75, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tMaestroCategoriasEcommerce, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bSeleccionarMaestroCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(440, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Maestros", jPanel3);
 
         jLabel1.setText("Nomenclatura");
         jLabel1.setPreferredSize(new java.awt.Dimension(80, 20));
@@ -529,7 +626,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGap(10, 10, 10)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -576,7 +673,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -608,77 +705,46 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lTamanho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(281, Short.MAX_VALUE))
+                .addContainerGap(282, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Filtros", jPanel2);
 
-        jLabel18.setText("Categorias eCommerce");
-        jLabel18.setPreferredSize(new java.awt.Dimension(120, 25));
-
-        tMaestroCategoriasEcommerce.setEditable(false);
-        tMaestroCategoriasEcommerce.setPreferredSize(new java.awt.Dimension(150, 25));
-
-        bSeleccionarMaestroCategorias.setText("Seleccionar");
-        bSeleccionarMaestroCategorias.setPreferredSize(new java.awt.Dimension(120, 25));
-        bSeleccionarMaestroCategorias.addActionListener(new java.awt.event.ActionListener() {
+        bOdooTest.setText("Test de Conexión");
+        bOdooTest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bSeleccionarMaestroCategoriasActionPerformed(evt);
+                bOdooTestActionPerformed(evt);
             }
         });
 
-        jLabel20.setText("Productos");
-        jLabel20.setPreferredSize(new java.awt.Dimension(120, 25));
+        taDebug.setColumns(20);
+        taDebug.setRows(5);
+        jScrollPane1.setViewportView(taDebug);
 
-        tMaestroProductos.setEditable(false);
-        tMaestroProductos.setPreferredSize(new java.awt.Dimension(150, 25));
-
-        bSeleccionarMaestroProductos.setText("Seleccionar");
-        bSeleccionarMaestroProductos.setPreferredSize(new java.awt.Dimension(120, 25));
-        bSeleccionarMaestroProductos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bSeleccionarMaestroProductosActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tMaestroCategoriasEcommerce, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bSeleccionarMaestroCategorias, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(bOdooTest)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE))
+                .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tMaestroCategoriasEcommerce, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bSeleccionarMaestroCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(bOdooTest)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(439, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Maestros", jPanel3);
+        jTabbedPane1.addTab("Odoo", jPanel4);
 
         eMensaje.setPreferredSize(new java.awt.Dimension(40, 25));
 
@@ -687,7 +753,10 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedPane1)
-            .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -730,9 +799,97 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         }
     }//GEN-LAST:event_bSeleccionarMaestroProductosActionPerformed
 
+    private void bOdooTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestActionPerformed
+        odooLogin();
+        
+    }//GEN-LAST:event_bOdooTestActionPerformed
 
+    private void odooLogin(){
+        HashMap respuesta;
+        Integer uid;
+        List<Object> resultado;
+        
+        try {
+            taDebug.append("Iniciando sesion... \n");
+            //Variables
+            final String url = "https://www.kosiuko.com.py",
+                    db = "Zatex",
+                    username = "soporte@junjuis.com",
+                    password = "C0nsult0r14%";
+            odooCliente = new XmlRpcClient();
+            
+            //Se obtiene los datos del servidor, no necesita autenticacion.
+            final XmlRpcClientConfigImpl common_config = new XmlRpcClientConfigImpl();
+            common_config.setServerURL(new URL(String.format("%s/xmlrpc/2/common", url)));
+            respuesta = (HashMap) odooCliente.execute(common_config, "version", emptyList());
+            taDebug.append("Versión identificada: " + respuesta.get("server_version") + " \n");
+            
+            //Se intenta autenticar
+            uid = (Integer) odooCliente.execute(common_config, "authenticate", asList(db, username, password, emptyMap()));
+            taDebug.append("Conexion realizada. UID: "+ uid +"\n");
+            
+            //Se verifica si se cuenta con los permisos para acceder al recurso indicado
+            String recurso = "product.public.category";
+            final XmlRpcClient models = new XmlRpcClient() {{
+                setConfig(new XmlRpcClientConfigImpl() {{
+                    setServerURL(new URL(String.format("%s/xmlrpc/2/object", url)));
+                }});
+            }};
+            Boolean tienePermisos = (Boolean) models.execute("execute_kw", asList(
+                db, uid, password,
+                recurso, "check_access_rights",
+                asList("read"),
+                new HashMap() {{ put("raise_exception", false); }}
+            ));
+            taDebug.append("Permiso para leer productos: "+ tienePermisos.toString() +"\n");
+
+            //Se lista los campos que cuenta el modelo.
+            respuesta = (HashMap) models.execute("execute_kw", asList(
+                db, uid, password,
+                recurso, "fields_get",
+                emptyList(),
+                new HashMap() {{
+                    put("attributes", asList("string", "help", "type"));
+                }}
+            ));
+            taDebug.append("Se encontraron: "+ respuesta.size() +" campos disponibles en "+recurso+".\n");
+            
+            //Se busca y obtiene los registros que cumplan el filtro indicado
+            resultado = asList((Object[]) models.execute("execute_kw", asList(
+                db, uid, password,
+                recurso, "search_read",
+                asList(asList(
+                    asList("x_referencia_externa", "<>", ""))),
+                new HashMap() {{
+                    put("fields", asList("name", "x_referencia_externa"));
+                    put("limit", 5);
+                }}
+            )));
+            
+            //Se imprimen los valores del resultado de la consulta anterior
+            taDebug.append("ID\tREF\tNOMBRE\n");
+            for (Object objeto : resultado) {
+                HashMap registro = (HashMap) objeto;
+                
+                taDebug.append(registro.get("id")+"\t");
+                taDebug.append(registro.get("x_referencia_externa")+"\t");
+                taDebug.append(registro.get("name")+"\n");
+            }
+            
+            
+            //DOCUMENTACION UTILIZADA
+            //https://github.com/odoo/documentation/blob/14.0/content/developer/misc/api/odoo.rst#id23
+        } catch (MalformedURLException | XmlRpcException | ClassCastException ex) {
+            taDebug.append(ex.getMessage()+"\n");
+            Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bExtraer;
+    private javax.swing.JButton bOdooTest;
     private javax.swing.JButton bSeleccionarMaestroCategorias;
     private javax.swing.JButton bSeleccionarMaestroProductos;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -753,6 +910,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lAnho;
     private javax.swing.JLabel lColor;
@@ -767,6 +926,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JTextField tMaestroCategoriasEcommerce;
     private javax.swing.JTextField tMaestroProductos;
     private javax.swing.JTable tProductos;
+    private javax.swing.JTextArea taDebug;
     // End of variables declaration//GEN-END:variables
 
     @Override

@@ -56,11 +56,14 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private XmlRpcClientConfigImpl odooConfigCommon;
     private XmlRpcClientConfigImpl odooConfigObject;
     private Boolean odooBandera;
-    private Integer odooNuevoID;
+    private Integer odooID;
     private HashMap odooRespuesta;
     private List<Object> odooRegistros;
     private Integer odooUID;
     private String odooURL, odooDB, odooUser, odooPassword;
+    
+    private Categoria categoria;
+    
     
     SWDiscovery SWDVY;
     String query;
@@ -461,6 +464,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         tOdooTestModeloInsertNombre = new javax.swing.JTextField();
         bOdooTestModeloListar1 = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
+        jLabel27 = new javax.swing.JLabel();
+        tOdooTestModeloUpdateReferenciaExterna = new javax.swing.JTextField();
+        jLabel28 = new javax.swing.JLabel();
+        tOdooTestModeloUpdateNombre = new javax.swing.JTextField();
+        bOdooTestModeloListar2 = new javax.swing.JButton();
+        bOdooTestModeloListar3 = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         taDebug = new javax.swing.JTextArea();
         jLabel24 = new javax.swing.JLabel();
@@ -829,49 +839,36 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             }
         });
 
+        jLabel27.setText("Referencia Externa");
+        jLabel27.setPreferredSize(new java.awt.Dimension(100, 25));
+
+        tOdooTestModeloUpdateReferenciaExterna.setPreferredSize(new java.awt.Dimension(80, 25));
+
+        jLabel28.setText("Nombre");
+        jLabel28.setPreferredSize(new java.awt.Dimension(100, 25));
+
+        tOdooTestModeloUpdateNombre.setPreferredSize(new java.awt.Dimension(80, 25));
+
+        bOdooTestModeloListar2.setText("Actualizar contenido");
+        bOdooTestModeloListar2.setPreferredSize(new java.awt.Dimension(130, 25));
+        bOdooTestModeloListar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bOdooTestModeloListar2ActionPerformed(evt);
+            }
+        });
+
+        bOdooTestModeloListar3.setText("Obtener contenido");
+        bOdooTestModeloListar3.setPreferredSize(new java.awt.Dimension(130, 25));
+        bOdooTestModeloListar3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bOdooTestModeloListar3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(tOdooTestModeloInsertNombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(tOdooTestModeloInsertRefenciaExterna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(80, 80, 80))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tOdooUID, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(20, 20, 20)
-                                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)
-                                .addComponent(tOdooVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(tOdooTestModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 201, Short.MAX_VALUE)))
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bOdooTestModeloPermisos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bOdooTestModeloListar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bOdooTestModeloListar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bOdooTestServidor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bOdooTestLogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bOdooTestModeloCampos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jSeparator1)
@@ -879,6 +876,55 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jSeparator2)
+                .addContainerGap())
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tOdooTestModeloUpdateReferenciaExterna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(tOdooTestModeloInsertRefenciaExterna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tOdooTestModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tOdooUID, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tOdooTestModeloUpdateNombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(tOdooVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 61, Short.MAX_VALUE))
+                    .addComponent(tOdooTestModeloInsertNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(24, 24, 24)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bOdooTestModeloListar3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bOdooTestModeloListar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bOdooTestModeloListar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bOdooTestModeloPermisos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bOdooTestServidor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(bOdooTestLogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(bOdooTestModeloCampos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bOdooTestModeloListar2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSeparator3)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -908,12 +954,20 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tOdooTestModeloInsertRefenciaExterna, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bOdooTestModeloListar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bOdooTestModeloListar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tOdooTestModeloInsertNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tOdooTestModeloUpdateReferenciaExterna, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bOdooTestModeloListar2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tOdooTestModeloUpdateNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bOdooTestModeloListar3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Test", jPanel5);
@@ -923,6 +977,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         taDebug.setRows(5);
         jScrollPane1.setViewportView(taDebug);
 
+        jLabel24.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
         jLabel24.setText("DEBUG");
         jLabel24.setPreferredSize(new java.awt.Dimension(120, 25));
 
@@ -939,22 +994,25 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedPane2)
-            .addComponent(jScrollPane1)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bOdooTest5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bOdooTest5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bOdooTest5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1036,11 +1094,20 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
 
     private void bOdooTest5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTest5ActionPerformed
         taDebug.setText("");
+        eMensaje.setText("");
     }//GEN-LAST:event_bOdooTest5ActionPerformed
 
     private void bOdooTestModeloListar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar1ActionPerformed
         odooModeloInsertar();
     }//GEN-LAST:event_bOdooTestModeloListar1ActionPerformed
+
+    private void bOdooTestModeloListar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar2ActionPerformed
+        odooModeloActualizar();
+    }//GEN-LAST:event_bOdooTestModeloListar2ActionPerformed
+
+    private void bOdooTestModeloListar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar3ActionPerformed
+        odooModeloObtener();
+    }//GEN-LAST:event_bOdooTestModeloListar3ActionPerformed
 
     private void odooImprimirRespuesta(HashMap respuesta){
         for (int i = 0; i < respuesta.size(); i++) {
@@ -1188,7 +1255,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             if(!tOdooTestModeloInsertRefenciaExterna.getText().isEmpty() && !tOdooTestModeloInsertNombre.getText().isEmpty()){
                 try {
                     taDebug.append("Insertando nuevo registro. \n");
-                    odooNuevoID = (Integer) odooCliente.execute(odooConfigObject, "execute_kw", 
+                    odooID = (Integer) odooCliente.execute(odooConfigObject, "execute_kw", 
                             asList(odooDB, odooUID, odooPassword, tOdooTestModelo.getText().trim(), 
                             "create", asList(new HashMap() {{ 
                                 put("x_referencia_externa", tOdooTestModeloInsertRefenciaExterna.getText());
@@ -1197,7 +1264,90 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                             )
                     );
 
-                    taDebug.append("Se registro satisfactoriamente el registro, asignando el nuevo ID: "+odooNuevoID+"\n");
+                    taDebug.append("Se registro satisfactoriamente el registro, asignando el nuevo ID: "+odooID+"\n");
+                } catch (XmlRpcException | ClassCastException ex) {
+                    taDebug.append(ex.getMessage()+"\n");
+                    Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                eMensaje.setText("Listo.");
+                eMensaje.setForeground(Color.blue);
+            }else{
+                eMensaje.setText("Complete correctamente los campos a ingresar.");
+                eMensaje.setForeground(Color.red);
+            }
+        }else{
+            eMensaje.setText("Inicie sesión, antes de realizar consultas. ");
+            eMensaje.setForeground(Color.red);
+        }
+    }
+    
+    private void odooModeloObtener(){
+        if(odooUID != null){
+            if(!tOdooTestModeloUpdateReferenciaExterna.getText().isEmpty()){
+                try {
+                    taDebug.append("Obteniendo registro. \n");
+                    odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
+                            asList(odooDB, odooUID, odooPassword, tOdooTestModelo.getText().trim(), 
+                            "search_read", asList(asList(asList("x_referencia_externa", "=", tOdooTestModeloUpdateReferenciaExterna.getText().trim()))),new HashMap() {{put("fields", asList("name", "x_referencia_externa"));}}        
+                            )
+                    ));
+                    
+                    if(odooRegistros.size() == 1){
+                        taDebug.append("Se encontró 1 registro. \n");
+                        HashMap registro = (HashMap) odooRegistros.get(0);
+                        
+                        categoria = new Categoria();
+                        categoria.setID(registro.get("id").toString());
+                        categoria.setReferenciaExterna(registro.get("x_referencia_externa").toString());
+                        categoria.setNombre(registro.get("name").toString());
+                        taDebug.append("\tID\tREF\tNOMBRE\n");
+                        taDebug.append("\t");
+                        taDebug.append(categoria.getID()+"\t");
+                        taDebug.append(categoria.getReferenciaExterna()+"\t");
+                        taDebug.append(categoria.getNombre()+"\n");
+                        
+                        tOdooTestModeloUpdateNombre.setText(categoria.getNombre());
+                        
+                    }else if(odooRegistros.size() > 1){
+                        taDebug.append("ERROR. Se encontró más de 1 registro. \n");
+                    }else{
+                        taDebug.append("No se encontraron registros. \n");
+                    }
+                    
+                    
+
+                    //taDebug.append("Se registro satisfactoriamente el registro, asignando el nuevo ID: "+odooNuevoID+"\n");
+                } catch (XmlRpcException | ClassCastException ex) {
+                    taDebug.append(ex.getMessage()+"\n");
+                    Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                eMensaje.setText("Listo.");
+                eMensaje.setForeground(Color.blue);
+            }else{
+                eMensaje.setText("Complete correctamente los campos a ingresar.");
+                eMensaje.setForeground(Color.red);
+            }
+        }else{
+            eMensaje.setText("Inicie sesión, antes de realizar consultas. ");
+            eMensaje.setForeground(Color.red);
+        }
+    }
+    
+    private void odooModeloActualizar(){
+        if(odooUID != null){
+            if(!tOdooTestModeloUpdateReferenciaExterna.getText().isEmpty() && !tOdooTestModeloUpdateNombre.getText().isEmpty()){
+                try {
+                    taDebug.append("Actualizando registro. \n");
+                    odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw", 
+                            asList(odooDB, odooUID, odooPassword, tOdooTestModelo.getText().trim(), 
+                            "write", asList(asList(categoria.getID()), new HashMap() {{ 
+                                put("x_referencia_externa", tOdooTestModeloUpdateReferenciaExterna.getText());
+                                put("name", tOdooTestModeloUpdateNombre.getText());
+                            }})
+                            )
+                    );
+                    
+                    taDebug.append((odooBandera?"Si":"No")+ " se pudo actualizar el registro. "+"\n");
                 } catch (XmlRpcException | ClassCastException ex) {
                     taDebug.append(ex.getMessage()+"\n");
                     Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
@@ -1331,6 +1481,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JButton bOdooTestModeloCampos;
     private javax.swing.JButton bOdooTestModeloListar;
     private javax.swing.JButton bOdooTestModeloListar1;
+    private javax.swing.JButton bOdooTestModeloListar2;
+    private javax.swing.JButton bOdooTestModeloListar3;
     private javax.swing.JButton bOdooTestModeloPermisos;
     private javax.swing.JButton bOdooTestServidor;
     private javax.swing.JButton bSeleccionarMaestroCategorias;
@@ -1353,6 +1505,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
@@ -1364,6 +1518,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JLabel lAnho;
@@ -1381,6 +1536,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JTextField tOdooTestModelo;
     private javax.swing.JTextField tOdooTestModeloInsertNombre;
     private javax.swing.JTextField tOdooTestModeloInsertRefenciaExterna;
+    private javax.swing.JTextField tOdooTestModeloUpdateNombre;
+    private javax.swing.JTextField tOdooTestModeloUpdateReferenciaExterna;
     private javax.swing.JTextField tOdooUID;
     private javax.swing.JTextField tOdooVersion;
     private javax.swing.JTable tProductos;

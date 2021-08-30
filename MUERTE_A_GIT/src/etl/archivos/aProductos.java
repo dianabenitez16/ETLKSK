@@ -6,6 +6,7 @@
 package etl.archivos;
 
 import clases.Categoria;
+import clases.Producto;
 import etl.Configuracion;
 import etl.etl;
 import java.awt.Color;
@@ -59,6 +60,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private Integer odooID;
     private HashMap odooRespuesta;
     private List<Object> odooRegistros;
+    private Producto[] odooProductos;
     private Integer odooUID;
     private String odooURL, odooDB, odooUser, odooPassword;
     
@@ -85,6 +87,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         loadConfig();
         initListeners();
         odooStart();
+        odooLogin();
     }
     
     private boolean loadConfig(){
@@ -259,8 +262,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 registros++;
             }
         }
-        
-        
         
         
         
@@ -471,15 +472,14 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         bOdooTestModeloListar2 = new javax.swing.JButton();
         bOdooTestModeloListar3 = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JSeparator();
+        jPanel6 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tOdooProductos = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         taDebug = new javax.swing.JTextArea();
         jLabel24 = new javax.swing.JLabel();
         bOdooTest5 = new javax.swing.JButton();
-        jDesktopPane1 = new javax.swing.JDesktopPane();
-        jPanel6 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         eMensaje = new javax.swing.JLabel();
 
         setClosable(true);
@@ -547,7 +547,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tCantidadMinima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
-                .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -615,7 +615,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(440, Short.MAX_VALUE))
+                .addContainerGap(617, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Maestros", jPanel3);
@@ -762,7 +762,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lTamanho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(282, Short.MAX_VALUE))
+                .addContainerGap(459, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Filtros", jPanel2);
@@ -977,10 +977,53 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     .addComponent(tOdooTestModeloUpdateNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bOdooTestModeloListar3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(241, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Test", jPanel5);
+
+        jButton1.setText("EXTRAER");
+        jButton1.setPreferredSize(new java.awt.Dimension(130, 25));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        tOdooProductos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Codigo", "Nombre", "Categorias"
+            }
+        ));
+        jScrollPane2.setViewportView(tOdooProductos);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50))
+        );
+
+        jTabbedPane2.addTab("Productos", jPanel6);
 
         taDebug.setEditable(false);
         taDebug.setColumns(20);
@@ -1028,68 +1071,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         );
 
         jTabbedPane1.addTab("Odoo", jPanel4);
-
-        jButton1.setText("EXTRAER");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(jTable1);
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(109, 109, 109))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 736, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50))
-        );
-
-        jDesktopPane1.setLayer(jPanel6, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
-        jDesktopPane1.setLayout(jDesktopPane1Layout);
-        jDesktopPane1Layout.setHorizontalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 23, Short.MAX_VALUE))
-        );
-        jDesktopPane1Layout.setVerticalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jTabbedPane1.addTab("Productos", jDesktopPane1);
 
         eMensaje.setPreferredSize(new java.awt.Dimension(40, 25));
 
@@ -1182,7 +1163,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     }//GEN-LAST:event_bOdooTestModeloListar3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-odooModeloListar();        // TODO add your handling code here:
+        odooModeloListarT();        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void tOdooTestModeloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tOdooTestModeloActionPerformed
@@ -1329,25 +1310,59 @@ odooModeloListar();        // TODO add your handling code here:
             eMensaje.setForeground(Color.red);
         }
     }
+    
     private void odooModeloListarT(){
         if(odooUID != null){
             try {
-                taDebug.append("Obteniendo contenido del modelo. \n");
                 odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
-                        asList(odooDB, odooUID, odooPassword, tOdooTestModelo.getText().trim(), 
-                        "search_read", emptyList(), new HashMap() {{ put("fields", asList("name", "default_code"));}}
+                        asList(odooDB, odooUID, odooPassword, "product.product", 
+                        "search_read", emptyList(), new HashMap() {{ put("fields", asList("default_code", "name", "public_categ_ids"));}}
                         //BUSQUEDA CON FILTRO
                         //"search_read", asList(asList(asList("x_referencia_externa", "<>", ""))),new HashMap() {{put("fields", asList("name", "x_referencia_externa"));}}        
                         )
                 ));
                 
-                taDebug.append("\tID\tREF\tNOMBRE\n");
-                for (Object objeto : odooRegistros) {
-                    HashMap registro = (HashMap) objeto;
-                    taDebug.append("\t");
-                    taDebug.append(registro.get("id")+"\t");
-                    taDebug.append(registro.get("x_referencia_externa")+"\t");
-                    taDebug.append(registro.get("name")+"\n");
+                odooProductos = new Producto[odooRegistros.size()];
+                
+                for (int j = 0; j < odooRegistros.size(); j++) {
+                    HashMap registroP = (HashMap) odooRegistros.get(j);
+                    HashMap registroC = (HashMap) registroP.get("public_categ_ids");
+                    
+                    Producto producto = new Producto();
+                    Categoria[] categorias = new Categoria[registroC.size()];
+                    
+                    for (int i = 0; i < categorias.length; i++) {
+                        categorias[i].setID(registroC.get("id").toString());
+                    }
+                    
+                    producto.setID(registroP.get("id").toString());
+                    producto.setReferenciaInterna(registroP.get("default_code").toString());
+                    producto.setNombre(registroP.get("name").toString());
+                    producto.setCategorias(categorias);
+                    
+                    odooProductos[j] = producto;                    
+        
+                }
+                
+                /*
+                Object[][] lineas = new Object[odooProductos.length][4];
+                
+                
+                tOdooProductos.setModel(new javax.swing.table.DefaultTableModel(
+                        odooProductos,
+                        tOdooProductos.getTableHeader()
+                ));
+                  */
+                
+                for (Producto odooProducto : odooProductos) {
+                    System.out.println("ID "+odooProducto.getID());
+                    System.out.println("RI "+odooProducto.getReferenciaInterna());
+                    System.out.println("NO "+odooProducto.getNombre());
+                    for (Categoria object : odooProducto.getCategorias()) {
+                        System.out.println("CA "+object.getID());
+                    }
+                    
+                    
                 }
                 
                 taDebug.append("Se encontraron: "+ odooRegistros.size() +" campos disponibles en "+tOdooTestModelo.getText().trim()+".\n");
@@ -1685,7 +1700,6 @@ odooModeloListar();        // TODO add your handling code here:
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel eMensaje;
     private javax.swing.JButton jButton1;
-    private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
@@ -1720,7 +1734,6 @@ odooModeloListar();        // TODO add your handling code here:
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lAnho;
     private javax.swing.JLabel lColor;
     private javax.swing.JLabel lNombre;
@@ -1733,6 +1746,7 @@ odooModeloListar();        // TODO add your handling code here:
     private javax.swing.JTextField tDeposito;
     private javax.swing.JTextField tMaestroCategoriasEcommerce;
     private javax.swing.JTextField tMaestroProductos;
+    private javax.swing.JTable tOdooProductos;
     private javax.swing.JTextField tOdooTestModelo;
     private javax.swing.JTextField tOdooTestModeloInsertNombre;
     private javax.swing.JTextField tOdooTestModeloInsertRefenciaExterna;

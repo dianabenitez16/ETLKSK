@@ -38,7 +38,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlrpc.XmlRpcException;
@@ -76,7 +78,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private List<Producto> odooDeleteProductos;
     private List<Producto> odooNoneProductos;
     
-    private List<Integer> odooWriteIDs;
     private HashMap odooWriteAttributes;
     
     
@@ -301,6 +302,12 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 discvProductos[registros].setPrecioCosto((Double) registro[3]);
                 discvProductos[registros].setStockTotal((Double) registro[4]);
                 discvProductos[registros].setStockSucursal((Double) registro[5]);
+                if(discvProductos[registros].getStockSucursal() >= (Integer.valueOf(tCantidadMinima.getText()))){
+                    discvProductos[registros].setPublicado(true);
+                }else{
+                    discvProductos[registros].setPublicado(false);
+                }
+                
                 for (Website odooWebsite : odooWebsites) {
                     if(registro[0].toString().substring(10, 11).equals(odooWebsite.getReferenciaExterna())){
                         discvProductos[registros].setWebsite(odooWebsite);
@@ -318,14 +325,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             }
         }
         
+        DefaultTableModel modelo = new DefaultTableModel(discvTablaContenido, SWDVY.consultar.encabezado[0]);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>((TableModel) modelo);
+        sorter.toggleSortOrder(1);
+        tProductos.setModel(modelo);
+        tProductos.setRowSorter(sorter);
         
-        
-        tProductos.setModel(new javax.swing.table.DefaultTableModel(
-            //SWDVY.consultar.datatypes,
-            discvTablaContenido,
-            SWDVY.consultar.encabezado[0]
-            // new String [] { "Codigo", "Descripcion", "Venta", "Costo", "Stock Total", "Stock Suc." }
-        ));
+        eMensaje.setText("De los "+SWDVY.consultar.datatypes.length+" registros, se filtraron "+registros+" productos.");
 
         
     }
@@ -1254,22 +1260,23 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     }//GEN-LAST:event_bExtraer1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        try {
-
-            odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
-                    asList(odooDB, odooUID, odooPassword, "product.product",
-                            "create", 
-
-                            asList(
-                                    new HashMap() {{put("name", "NOMBRE ALEATORIO 12345");}},
-                                    new HashMap() {{put("name", "NOMBRE ALEATORIO 67890");}}
-                            
-                            
-                    )
-            ));
-        } catch (XmlRpcException ex) {
-            Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+        for (Producto odooUpdateProducto : odooProductos) {
+            try {
+                //odooUpdateProducto.imprimir();
+                odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
+                        asList(odooDB, odooUID, odooPassword, "product.product",
+                                "write", asList(asList(odooUpdateProducto.getID()), 
+                                        new HashMap(){{
+                                            put("is_published", false);
+                                        }}
+                                        )
+                        )
+                );
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        System.out.println("Se actualizaron " + odooProductos.length + " productos.");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void odooImprimirRespuesta(HashMap respuesta){
@@ -1529,13 +1536,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     new String [] { "ID","Codigo", "Nombre", "PrecioVenta","PrecioCosto", "Categorias", "WebSite", "Publicado" }
                 ));
                 
-                taDebug.append("Se encontraron: "+ odooRegistros.size() +" campos disponibles en "+tOdooTestModelo.getText().trim()+".\n");
+                
+                eMensaje.setText("Se encontraron: "+ odooRegistros.size() +" productos en Odoo.");
+                eMensaje.setForeground(Color.blue);
             } catch (XmlRpcException | ClassCastException ex) {
                 taDebug.append(ex.getMessage()+"\n");
                 Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
             }
-            eMensaje.setText("Listo.");
-            eMensaje.setForeground(Color.blue);
         }else{
             eMensaje.setText("Inicie sesión, antes de realizar consultas. ");
             eMensaje.setForeground(Color.red);
@@ -1550,39 +1557,41 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 odooDeleteProductos = new ArrayList<> (); 
                 odooNoneProductos = new ArrayList<> (); 
                 
-                odooWriteIDs = new ArrayList<> (); 
-                //odooWriteAttributes = new HashMap(); 
+                Boolean productoNuevo;
                 
-                
+                List<Integer> odooWriteIDs = new ArrayList<> (); 
+                                
                 
                 //RECORRIDO DISCOVERY
+                
                 for (Producto discvProducto : discvProductos) {
+                    productoNuevo = true;
                     for (Producto odooProducto : odooProductos) {
                         if(discvProducto.getReferenciaInterna().equals(odooProducto.getReferenciaInterna())){
-                            if(discvProducto.getStockSucursal() > 0 && odooProducto.getPublicado()){
+                            productoNuevo = false;
+                            // URGENTE MEJORAR ESTE DISPARATE
+                            if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
                                 odooNoneProductos.add(odooProducto);
-                            }else if(discvProducto.getStockSucursal() > 0 && !odooProducto.getPublicado()){
+                            }else if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && !odooProducto.getPublicado()){
                                 odooProducto.setPublicado(true);
+                                odooProducto.setCategorias(discvProducto.getCategorias());
+                                    
                                 odooUpdateProductos.add(odooProducto);
-                            }else if(discvProducto.getStockSucursal() <= 0 && odooProducto.getPublicado()){
+                            }else if(discvProducto.getStockSucursal() <= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
                                 odooProducto.setPublicado(false);
+                                odooProducto.setCategorias(discvProducto.getCategorias());
+                                
                                 odooUpdateProductos.add(odooProducto);
                             }else{
                                 odooNoneProductos.add(odooProducto);
                             }
-                            
-                        }else{
-                            if(discvProducto.getStockSucursal() > 0){
-                                discvProducto.setPublicado(true);
-                            }else{
-                                discvProducto.setPublicado(false);
-                            }
-                            
-                            
-                            odooInsertProductos.add(discvProducto);
                         }
                     }
+                    if(productoNuevo){
+                        odooInsertProductos.add(discvProducto);
+                    }
                 }
+                
                 
                 for (Producto odooProducto : odooProductos) {
                     Boolean bandera = false;
@@ -1615,6 +1624,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 
                 
                 /************ RECORRIDO DE LISTAS *****************/
+                System.out.println("\tSINCORNIZACION");
                 // PRODUCTOS A DESPUBLICAR
                 for (Producto odooDeleteProducto : odooDeleteProductos) {
                     odooWriteIDs.add(odooDeleteProducto.getID());
@@ -1637,7 +1647,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 Integer contadorUpdate = 0;
                 for (Producto odooUpdateProducto : odooUpdateProductos) {
                     try {
-                        odooUpdateProducto.imprimir();
+                        //odooUpdateProducto.imprimir();
                         odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
                                 asList(odooDB, odooUID, odooPassword, "product.product",
                                         "write", asList(asList(odooUpdateProducto.getID()), 
@@ -1648,7 +1658,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                     put("standard_price", odooUpdateProducto.getPrecioCosto());
                                                     put("is_published", odooUpdateProducto.getPublicado());
                                                     put("website_id", odooUpdateProducto.getWebsite().getID());
-                                                    put("public_category_ids",odooUpdateProducto.getArrayCategorias());
+                                                    if(odooUpdateProducto.getCategorias() != null)
+                                                        put("public_categ_ids",odooUpdateProducto.getArrayCategorias());
                                                     //agregar un check dinamico de caracteristicas
                                                 }}
                                                 )
@@ -1665,17 +1676,12 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 System.out.println("Se actualizaron "+contadorUpdate+" de "+odooUpdateProductos.size()+" productos.");
                 
                 
-                // PRODUCTOS A NADIE
-                /*
-                for (Producto odooNoneProducto : odooNoneProductos) {
-                    System.out.println("NONE_RI:"+odooNoneProducto.getReferenciaInterna());
-                }*/
+                // PRODUCTOS A NADIE NONE
                 System.out.println("Se obviaron "+odooNoneProductos.size()+" productos.");
                 
                 // PRODUCTOS A INSERTAR 
                 Integer contadorInsert = 0;
                 for (Producto odooInsertProducto : odooInsertProductos) {
-                    
                     try {
                         //odooInsertProducto.imprimir();
                         odooID = (Integer) odooCliente.execute(odooConfigObject, "execute_kw",

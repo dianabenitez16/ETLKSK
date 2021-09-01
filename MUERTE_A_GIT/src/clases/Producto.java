@@ -46,7 +46,7 @@ public class Producto {
     }
 
     public void setReferenciaInterna(String referenciaInterna) {
-        this.referenciaInterna = referenciaInterna;
+        this.referenciaInterna = referenciaInterna.trim();
     }
 
     public String getNombre() {
@@ -185,6 +185,12 @@ public class Producto {
         System.out.println("list_price: "+this.getPrecioVenta());
         System.out.println("standard_price: "+this.getPrecioCosto());
         System.out.println("is_published: "+this.getPublicado());
+        if(this.getCategorias() != null){
+            for (Categoria categoria : this.getCategorias()) {
+                System.out.println("public_categ_ids: "+categoria.getID());
+            }
+        }
+        
         System.out.println("website_id: "+this.getWebsite().getID());
     }
     

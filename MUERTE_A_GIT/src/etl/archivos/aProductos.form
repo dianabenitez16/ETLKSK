@@ -80,7 +80,10 @@
                                   <Component id="tCantidadMinima" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="bExtraer" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="bExtraer" alignment="1" max="-2" attributes="0"/>
+                                  <Component id="bExtraer1" alignment="1" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
@@ -100,6 +103,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel19" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="tCantidadMinima" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bExtraer1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                       <Component id="spProductos" pref="390" max="32767" attributes="0"/>
@@ -127,13 +131,15 @@
                 <Component class="javax.swing.JTable" name="tProductos">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="6" rowCount="0">
+                      <Table columnCount="8" rowCount="0">
                         <Column editable="true" title="Codigo" type="java.lang.Object"/>
                         <Column editable="true" title="Descripcion" type="java.lang.Object"/>
                         <Column editable="true" title="Venta" type="java.lang.Object"/>
                         <Column editable="true" title="Costo" type="java.lang.Object"/>
                         <Column editable="true" title="StockTotal" type="java.lang.Object"/>
                         <Column editable="true" title="StockSucursal" type="java.lang.Object"/>
+                        <Column editable="true" title="WebSite" type="java.lang.Object"/>
+                        <Column editable="true" title="Categoria" type="java.lang.Object"/>
                       </Table>
                     </Property>
                   </Properties>
@@ -169,6 +175,17 @@
                   <Dimension value="[80, 25]"/>
                 </Property>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="bExtraer1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Sincronizar"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[120, 25]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bExtraer1ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -663,11 +680,14 @@
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                                      <Component id="bOdooTestLogin" alignment="0" max="-2" attributes="0"/>
-                                      <Component id="bOdooTestModeloCampos" alignment="0" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                                          <Component id="bOdooTestLogin" alignment="0" max="-2" attributes="0"/>
+                                          <Component id="bOdooTestModeloCampos" alignment="0" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="bOdooTestModeloListar2" alignment="1" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="bOdooTestModeloListar2" alignment="1" max="-2" attributes="0"/>
+                                  <Component id="jButton2" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -722,6 +742,7 @@
                                   <Component id="bOdooTestModeloListar1" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="tOdooTestModeloInsertNombre" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel26" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jSeparator3" min="-2" pref="10" max="-2" attributes="0"/>
@@ -782,7 +803,6 @@
                     </Component>
                     <Component class="javax.swing.JTextField" name="tOdooTestModelo">
                       <Properties>
-                        <Property name="editable" type="boolean" value="false"/>
                         <Property name="text" type="java.lang.String" value="product.public.category"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[80, 25]"/>
@@ -991,6 +1011,17 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bOdooTest5ActionPerformed"/>
                       </Events>
                     </Component>
+                    <Component class="javax.swing.JButton" name="jButton2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Test aleatorio"/>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[130, 25]"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="jPanel6">
@@ -1052,11 +1083,15 @@
                         <Component class="javax.swing.JTable" name="tOdooProductos">
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="4" rowCount="0">
+                              <Table columnCount="8" rowCount="0">
                                 <Column editable="true" title="ID" type="java.lang.Object"/>
                                 <Column editable="true" title="Codigo" type="java.lang.Object"/>
                                 <Column editable="true" title="Nombre" type="java.lang.Object"/>
+                                <Column editable="true" title="PrecioCosto" type="java.lang.Object"/>
+                                <Column editable="true" title="PrecioVenta" type="java.lang.Object"/>
                                 <Column editable="true" title="Categorias" type="java.lang.Object"/>
+                                <Column editable="true" title="WebSite" type="java.lang.Object"/>
+                                <Column editable="true" title="Publicado" type="java.lang.Object"/>
                               </Table>
                             </Property>
                           </Properties>

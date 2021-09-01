@@ -9,12 +9,13 @@ package clases;
  *
  * @author Juan Bogado
  */
-public class Categoria {
+public class Website {
     private Integer ID;
-    private String referenciaExterna;
     private String nombre;
+    private String referenciaExterna;
+    private String url;
 
-    public Categoria() {
+    public Website() {
     }
 
     public Integer getID() {
@@ -25,14 +26,15 @@ public class Categoria {
         this.ID = ID;
     }
 
-    public String getReferenciaExterna() {
-        return referenciaExterna;
+    public String getUrl() {
+        return url;
     }
 
-    public void setReferenciaExterna(String referenciaExterna) {
-        this.referenciaExterna = referenciaExterna.trim();
+    public void setUrl(String url) {
+        this.url = url;
     }
 
+    
     public String getNombre() {
         return nombre;
     }
@@ -40,12 +42,21 @@ public class Categoria {
     public void setNombre(String nombre) {
         this.nombre = nombre.trim();
     }
+
+    public String getReferenciaExterna() {
+        return referenciaExterna;
+    }
+
+    public void setReferenciaExterna(String referenciaExterna) {
+        this.referenciaExterna = referenciaExterna;
+    }
+    
     
     
     
     public void imprimir(){
         System.out.print("ID: "+this.ID);
-        System.out.print("\tRE: "+this.referenciaExterna);
+        System.out.print("\tURL: "+this.url);
         System.out.print("\tNO: "+this.nombre);
         System.out.println("");
     }

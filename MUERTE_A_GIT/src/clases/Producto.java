@@ -10,15 +10,17 @@ package clases;
  * @author Juan Bogado
  */
 public class Producto {
-    private String ID;
+    private Integer ID;
     private String referenciaInterna;
     private Categoria[] categorias;
+    private Website website;
+    private Boolean publicado;
     
     private String nombre;
-    private Integer precioVenta;
-    private Integer precioCosto;
-    private Integer stockTotal;
-    private Integer stockSucursal;
+    private Double precioVenta;
+    private Double precioCosto;
+    private Double stockTotal;
+    private Double stockSucursal;
     
     private String anho;
     private String procedencia;
@@ -31,11 +33,11 @@ public class Producto {
     public Producto() {
     }
 
-    public String getID() {
+    public Integer getID() {
         return ID;
     }
 
-    public void setID(String id) {
+    public void setID(Integer id) {
         this.ID = id;
     }
 
@@ -55,35 +57,35 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public Integer getPrecioVenta() {
+    public Double getPrecioVenta() {
         return precioVenta;
     }
 
-    public void setPrecioVenta(Integer precioVenta) {
+    public void setPrecioVenta(Double precioVenta) {
         this.precioVenta = precioVenta;
     }
 
-    public Integer getPrecioCosto() {
+    public Double getPrecioCosto() {
         return precioCosto;
     }
 
-    public void setPrecioCosto(Integer precioCosto) {
+    public void setPrecioCosto(Double precioCosto) {
         this.precioCosto = precioCosto;
     }
 
-    public Integer getStockTotal() {
+    public Double getStockTotal() {
         return stockTotal;
     }
 
-    public void setStockTotal(Integer stockTotal) {
+    public void setStockTotal(Double stockTotal) {
         this.stockTotal = stockTotal;
     }
 
-    public Integer getStockSucursal() {
+    public Double getStockSucursal() {
         return stockSucursal;
     }
 
-    public void setStockSucursal(Integer stockSucursal) {
+    public void setStockSucursal(Double stockSucursal) {
         this.stockSucursal = stockSucursal;
     }
 
@@ -150,7 +152,40 @@ public class Producto {
     public void setCategorias(Categoria[] categorias) {
         this.categorias = categorias;
     }
+
+    public Website getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(Website website) {
+        this.website = website;
+    }
+
+    public Boolean getPublicado() {
+        return publicado;
+    }
+
+    public void setPublicado(Boolean publicado) {
+        this.publicado = publicado;
+    }
     
+    public Object[] getArrayCategorias(){
+        Object[] resultado = new Object[this.categorias.length];
+        for (int i = 0; i < categorias.length; i++) {
+            resultado[i] = categorias[i].getID();
+        }
+        return resultado;
+    }
     
+    public void imprimir(){
+        System.out.println("");
+        System.out.println("ID: "+this.getID());
+        System.out.println("default_code: "+this.getReferenciaInterna());
+        System.out.println("name: "+this.getNombre());
+        System.out.println("list_price: "+this.getPrecioVenta());
+        System.out.println("standard_price: "+this.getPrecioCosto());
+        System.out.println("is_published: "+this.getPublicado());
+        System.out.println("website_id: "+this.getWebsite().getID());
+    }
     
 }

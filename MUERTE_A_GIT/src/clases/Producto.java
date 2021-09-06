@@ -13,6 +13,7 @@ public class Producto {
     private Integer ID;
     private String referenciaInterna;
     private Categoria[] categorias;
+    private Tamanho[] tamanho;
     private Website website;
     private Boolean publicado;
     
@@ -28,7 +29,6 @@ public class Producto {
     private String modelo;
     private String color;
     private String sexo;
-    private String tamanho;
 
     public Producto() {
     }
@@ -137,11 +137,11 @@ public class Producto {
         this.sexo = sexo;
     }
 
-    public String getTamanho() {
+    public Tamanho[] getTamanho() {
         return tamanho;
     }
 
-    public void setTamanho(String tamanho) {
+    public void setTamanho(Tamanho[] tamanho) {
         this.tamanho = tamanho;
     }
 
@@ -176,6 +176,13 @@ public class Producto {
         }
         return resultado;
     }
+    public Object[] getArrayTamanho(){
+        Object[] resultados = new Object[this.tamanho.length];
+        for (int j = 0; j < tamanho.length; j++) {
+            resultados[j] = tamanho[j].getID();
+        }
+        return resultados;
+    }
     
     public void imprimir(){
         System.out.println("");
@@ -189,9 +196,13 @@ public class Producto {
             for (Categoria categoria : this.getCategorias()) {
                 System.out.println("public_categ_ids: "+categoria.getID());
             }
+        if(this.getTamanho() != null){
+            for (Tamanho tamanio : this.getTamanho()) {
+                System.out.println("atributte_line_ids: "+tamanio.getID());
+            }
         }
         
         System.out.println("website_id: "+this.getWebsite().getID());
     }
     
-}
+    }}

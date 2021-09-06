@@ -7,6 +7,7 @@ package etl.archivos;
 
 import clases.Categoria;
 import clases.Producto;
+import clases.Tamanho;
 import clases.Website;
 import etl.Configuracion;
 import etl.etl;
@@ -68,6 +69,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private Producto[] odooProductos;
     private Website[] odooWebsites;
     private Categoria[] odooCategorias;
+    private Tamanho[] odooTamanho;
     private Integer odooUID;
     private String odooURL, odooDB, odooUser, odooPassword;
     
@@ -82,6 +84,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     
     
     private Categoria categoria;
+    private Tamanho tamanho;
     
     
     SWDiscovery SWDVY;
@@ -97,7 +100,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     File maestroCategorias;
     
     private Categoria categorias[];
-    
+    private Tamanho tamanhos[];
     public aProductos(etl etl) {
         initComponents();
         SWDVY = new SWDiscovery(eMensaje);
@@ -178,6 +181,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     }
     
     public void procesarDatos(){
+        
         Boolean bandera = false;
         Integer registros = 0;
         
@@ -592,7 +596,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
+                    .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 739, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -674,7 +678,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -789,7 +793,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 447, Short.MAX_VALUE))
+                                .addGap(0, 427, Short.MAX_VALUE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -798,7 +802,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         .addGap(11, 11, 11)
                         .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(lSexo, javax.swing.GroupLayout.DEFAULT_SIZE, 660, Short.MAX_VALUE)))
+                        .addComponent(lSexo, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -1014,7 +1018,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
                         .addComponent(tOdooVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 61, Short.MAX_VALUE))
+                        .addGap(0, 46, Short.MAX_VALUE))
                     .addComponent(tOdooTestModeloInsertNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1124,7 +1128,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1146,7 +1150,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1163,10 +1167,11 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1392,7 +1397,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 taDebug.append("Obteniendo contenido del modelo. \n");
                 odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
                         asList(odooDB, odooUID, odooPassword, tOdooTestModelo.getText().trim(), 
-                        "search_read", emptyList(), new HashMap() {{ put("fields", asList("name", "x_referencia_externa"));}}
+                        "search_read", emptyList(), emptyMap()
                         //BUSQUEDA CON FILTRO
                         //"search_read", asList(asList(asList("x_referencia_externa", "<>", ""))),new HashMap() {{put("fields", asList("name", "x_referencia_externa"));}}        
                         )
@@ -1402,8 +1407,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 for (Object objeto : odooRegistros) {
                     HashMap registro = (HashMap) objeto;
                     taDebug.append("\t");
-                    taDebug.append(registro.get("id")+"\t");
-                    taDebug.append(registro.get("x_referencia_externa")+"\t");
+                    taDebug.append(registro.get("id")+"\t");  
                     taDebug.append(registro.get("name")+"\n");
                 }
                 
@@ -1426,9 +1430,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 // WEBSITES
                 odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
                         asList(odooDB, odooUID, odooPassword, "website", 
-                        "search_read", emptyList(), new HashMap() {{ put("fields", asList("name", "domain", "x_referencia_externa"));}}
-                        )
-                ));
+                        "search_read", emptyList(), emptyMap()
+                        )));
                 odooWebsites = new Website[odooRegistros.size()];
                 for (int i = 0; i < odooRegistros.size(); i++) {
                     HashMap registroW = (HashMap) odooRegistros.get(i);
@@ -1455,6 +1458,22 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     odooCategorias[i].setReferenciaExterna((String) registroC.get("x_referencia_externa"));
                 }
                 
+                //TAMAÑOS 
+        
+                odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
+                        asList(odooDB, odooUID, odooPassword, "product.attribute",   
+                        "search_read", asList(asList(asList("name", "<>", ""))), new HashMap() {{ put("fields", asList("name"));}}
+                        )
+                ));
+                odooTamanho = new Tamanho[odooRegistros.size()];
+                for (int j = 0; j < odooRegistros.size(); j++) {
+                    HashMap registroV = (HashMap) odooRegistros.get(j);
+                    odooTamanho[j] = new Tamanho();
+                    odooTamanho[j].setID((Integer) registroV.get("id"));
+                    odooTamanho[j].setNombre((String) registroV.get("name"));
+                  
+                }
+                
                 // PRODUCTOS
                 odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
                         asList(odooDB, odooUID, odooPassword, "product.product", 
@@ -1464,7 +1483,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                         "name", 
                                         "list_price",
                                         "standard_price",
-                                        "public_categ_ids" ,
+                                        "public_categ_ids",
+                                        "product_template_attribute_value_ids",
                                         "website_id",
                                         "is_published"));}}
                         //"search_read", emptyList(), emptyMap()
@@ -1480,14 +1500,17 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     //Definicion de variables finales
                     Producto producto = new Producto();
                     Categoria[] categorias;
+                    Tamanho[] tamanho;
                     Website website = new Website();
+                    
                     
                     //Definicion de variables a parsear.
                     HashMap registroP = (HashMap) odooRegistros.get(j);
                     Object[] registroC = (Object[]) registroP.get("public_categ_ids");
+                    Object[] registroV = (Object[]) registroP.get("product_template_attribute_value_ids");
                     Object[] registroW;
                     categorias = new Categoria[registroC.length];
-                    
+                    tamanho = new Tamanho[registroV.length];
                     //WEBSITE
                     if(registroP.get("website_id") instanceof Object[] ){
                         registroW = (Object[]) registroP.get("website_id");
@@ -1497,8 +1520,12 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     //CATEGORIAS
                     for (int i = 0; i < registroC.length; i++) {
                         categorias[i] = new Categoria();
-                        categorias[i].setID((Integer) registroC[i]);
-                        
+                        categorias[i].setID((Integer) registroC[i]);   
+                    }
+                    //VARIANTES
+                    for (int i = 0; i < registroV.length; i++) {
+                        tamanho[i] = new Tamanho();
+                        tamanho[i].setID((Integer) registroV[i]);   
                     }
                     
                     //SET DE VALORES EN VARIABLE FINAL
@@ -1508,13 +1535,14 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     producto.setPrecioVenta((Double) registroP.get("list_price"));
                     producto.setPrecioCosto((Double) registroP.get("standard_price"));
                     producto.setCategorias(categorias);
+                    producto.setTamanho(tamanho);
                     producto.setWebsite(website); 
                     producto.setPublicado((Boolean) registroP.get("is_published"));
                     odooProductos[j] = producto;
                 }
                 
                 // CARGA DE TABLA
-                Object[][] odooTablaContenido = new Object[odooProductos.length][8];
+                Object[][] odooTablaContenido = new Object[odooProductos.length][9];
                 //Object[] tablaEncabezado = 
                 for (int i = 0; i < odooProductos.length; i++) {
                     odooTablaContenido[i][0] = odooProductos[i].getID();
@@ -1527,13 +1555,19 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         tablaConteniadoCategorias += x.getID()+", ";
                     }
                     odooTablaContenido[i][5] = tablaConteniadoCategorias;
-                    odooTablaContenido[i][6] = odooProductos[i].getWebsite().getID();
-                    odooTablaContenido[i][7] = odooProductos[i].getPublicado().toString();
+                    String tablaContenidoTamanhos = "";
+                    for (Tamanho x : odooProductos[i].getTamanho()) {
+                        tablaContenidoTamanhos += x.getID()+", ";
+                    }
+                    odooTablaContenido[i][6] = tablaContenidoTamanhos;
+                    odooTablaContenido[i][7] = odooProductos[i].getWebsite().getID();
+                    odooTablaContenido[i][8] = odooProductos[i].getPublicado().toString();
                 }
                  
                 tOdooProductos.setModel(new javax.swing.table.DefaultTableModel(
                     odooTablaContenido,
-                    new String [] { "ID","Codigo", "Nombre", "PrecioVenta","PrecioCosto", "Categorias", "WebSite", "Publicado" }
+                    new String [] { "ID","Codigo", "Nombre", "PrecioVenta","PrecioCosto", "Categorias","Tamaño", "WebSite", "Publicado", 
+                    }
                 ));
                 
                 
@@ -1575,23 +1609,30 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                             }else if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && !odooProducto.getPublicado()){
                                 odooProducto.setPublicado(true);
                                 odooProducto.setCategorias(discvProducto.getCategorias());
+                                odooProducto.setTamanho(discvProducto.getTamanho());
                                     
                                 odooUpdateProductos.add(odooProducto);
                             }else if(discvProducto.getStockSucursal() <= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
                                 odooProducto.setPublicado(false);
                                 odooProducto.setCategorias(discvProducto.getCategorias());
+                                odooProducto.setTamanho(discvProducto.getTamanho());
+                                
                                 
                                 odooUpdateProductos.add(odooProducto);
+                                
+                                    
+                                
                             }else{
                                 odooNoneProductos.add(odooProducto);
                             }
                         }
+                        
                     }
                     if(productoNuevo){
                         odooInsertProductos.add(discvProducto);
+                        
                     }
                 }
-                
                 
                 for (Producto odooProducto : odooProductos) {
                     Boolean bandera = false;
@@ -1619,9 +1660,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     }
                     
                 }
-                
-                
-                
                 
                 /************ RECORRIDO DE LISTAS *****************/
                 System.out.println("\tSINCORNIZACION");
@@ -1660,6 +1698,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                     put("website_id", odooUpdateProducto.getWebsite().getID());
                                                     if(odooUpdateProducto.getCategorias() != null)
                                                         put("public_categ_ids",odooUpdateProducto.getArrayCategorias());
+                                                    if(odooUpdateProducto.getCategorias() != null)
+                                                        put("product_template_attribute_value_ids",odooUpdateProducto.getArrayTamanho());
                                                     //agregar un check dinamico de caracteristicas
                                                 }}
                                                 )
@@ -1696,6 +1736,10 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                     put("website_id", odooInsertProducto.getWebsite().getID());
                                                     if(odooInsertProducto.getCategorias() != null){
                                                         put("public_categ_ids",odooInsertProducto.getArrayCategorias());
+                                                    }
+                                                    if(odooInsertProducto.getTamanho() != null){
+                                                        put("product_template_attribute_value_ids",odooInsertProducto.getArrayTamanho());
+                                                        
                                                     }
                                                 }}
                                                 )

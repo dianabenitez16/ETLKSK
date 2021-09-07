@@ -464,7 +464,7 @@
                                       <Component id="jLabel23" min="-2" pref="50" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                                       <Component id="tOdooVersion" min="-2" pref="50" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="46" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="42" max="32767" attributes="0"/>
                                   </Group>
                                   <Component id="tOdooTestModeloInsertNombre" alignment="1" max="32767" attributes="0"/>
                               </Group>

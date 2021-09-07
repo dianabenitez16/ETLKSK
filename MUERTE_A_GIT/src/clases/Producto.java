@@ -178,8 +178,8 @@ public class Producto {
     }
     public Object[] getArrayTamanho(){
         Object[] resultados = new Object[this.tamanho.length];
-        for (int j = 0; j < tamanho.length; j++) {
-            resultados[j] = tamanho[j].getID();
+        for (int i = 0; i < tamanho.length; i++) {
+            resultados[i] = tamanho[i].getID();
         }
         return resultados;
     }

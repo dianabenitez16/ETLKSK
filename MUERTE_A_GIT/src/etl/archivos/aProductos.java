@@ -923,7 +923,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
                         .addComponent(tOdooVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 46, Short.MAX_VALUE))
+                        .addGap(0, 42, Short.MAX_VALUE))
                     .addComponent(tOdooTestModeloInsertNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1302,74 +1302,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         }
     }//GEN-LAST:event_bSeleccionarMaestroProductosActionPerformed
 
-    private void bOdooTestServidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestServidorActionPerformed
-        odooConexion();
-    }//GEN-LAST:event_bOdooTestServidorActionPerformed
-
-    private void bOdooTestLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestLoginActionPerformed
-        odooLogin();
-    }//GEN-LAST:event_bOdooTestLoginActionPerformed
-
-    private void bOdooTestModeloPermisosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloPermisosActionPerformed
-        odooModeloPermisos();
-    }//GEN-LAST:event_bOdooTestModeloPermisosActionPerformed
-
-    private void bOdooTestModeloCamposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloCamposActionPerformed
-        odooModeloAtributos();
-    }//GEN-LAST:event_bOdooTestModeloCamposActionPerformed
-
-    private void bOdooTestModeloListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListarActionPerformed
-        odooModeloListar();
-    }//GEN-LAST:event_bOdooTestModeloListarActionPerformed
-
-    private void bOdooTest5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTest5ActionPerformed
-        taDebug.setText("");
-        eMensaje.setText("");
-    }//GEN-LAST:event_bOdooTest5ActionPerformed
-
-    private void bOdooTestModeloListar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar1ActionPerformed
-        odooModeloInsertar();
-    }//GEN-LAST:event_bOdooTestModeloListar1ActionPerformed
-
-    private void bOdooTestModeloListar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar2ActionPerformed
-        odooModeloActualizar();
-    }//GEN-LAST:event_bOdooTestModeloListar2ActionPerformed
-
-    private void bOdooTestModeloListar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar3ActionPerformed
-        odooModeloObtener();
-    }//GEN-LAST:event_bOdooTestModeloListar3ActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         odooModeloListarT();        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void tOdooTestModeloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tOdooTestModeloActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tOdooTestModeloActionPerformed
-
     private void bExtraer1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExtraer1ActionPerformed
         odooProductosSincronizar();
     }//GEN-LAST:event_bExtraer1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        for (Producto odooUpdateProducto : odooProductos) {
-            try {
-                //odooUpdateProducto.imprimir();
-                odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
-                        asList(odooDB, odooUID, odooPassword, "product.product",
-                                "write", asList(asList(odooUpdateProducto.getID()), 
-                                        new HashMap(){{
-                                            put("is_published", false);
-                                        }}
-                                        )
-                        )
-                );
-            } catch (XmlRpcException ex) {
-                Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        System.out.println("Se actualizaron " + odooProductos.length + " productos.");
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if(odooUID != null){
@@ -1459,12 +1398,15 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     asList(odooDB, odooUID, odooPassword, "product.product",
                             "create", asList( 
                                     new HashMap(){{
-                                        put("default_code", "SHORT0P");
+                                        put("default_code", "FALDAP");
                                         put("name", "SHORT");
                                         put("list_price", 100000);
                                         put("standard_price", 50000);
                                         put("is_published", true);
                                         put("website_id", 1);
+                                        put("attribute_line_ids", "product_variant_id");
+                                        
+                                        
                                     }}
                                     )
                     )
@@ -1474,12 +1416,16 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     asList(odooDB, odooUID, odooPassword, "product.product",
                             "create", asList( 
                                     new HashMap(){{
-                                        put("default_code", "SHORT0M");
+                                        put("default_code", "FALDAM");
                                         put("name", "SHORT");
                                         put("list_price", 100000);
                                         put("standard_price", 50000);
                                         put("is_published", true);
                                         put("website_id", 1);
+                                        put("attribute_line_ids",2);
+                                        put("product_template_attribute_values_ids",38);
+                                        
+                                        
                                     }}
                                     )
                     )
@@ -1489,12 +1435,14 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     asList(odooDB, odooUID, odooPassword, "product.product",
                             "create", asList( 
                                     new HashMap(){{
-                                        put("default_code", "SHORT0G");
+                                        put("default_code", "FALDAXL");
                                         put("name", "SHORT");
                                         put("list_price", 100000);
                                         put("standard_price", 50000);
                                         put("is_published", true);
                                         put("website_id", 1);
+                                        put("attribute_line_ids",2);
+                                        put("product_template_attribute_values_ids",38);
                                     }}
                                     )
                     )
@@ -1507,8 +1455,9 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                         new HashMap(){{
                                             for (Integer odooIDx : odooIDs) {
                                                 if(odooID != odooIDx)
-                                                    put("product_variant_ids", odooIDx);
+                                                    put("product_variant_id", odooIDx);
                                             }
+                                            
                                         }}
                                         )
                         )
@@ -1524,6 +1473,67 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bOdooTestModeloListar4ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        for (Producto odooUpdateProducto : odooProductos) {
+            try {
+                //odooUpdateProducto.imprimir();
+                odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
+                    asList(odooDB, odooUID, odooPassword, "product.product",
+                        "write", asList(asList(odooUpdateProducto.getID()),
+                            new HashMap(){{
+                                put("is_published", false);
+                            }}
+                        )
+                    )
+                );
+            } catch (XmlRpcException ex) {
+                Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.println("Se actualizaron " + odooProductos.length + " productos.");
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void bOdooTest5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTest5ActionPerformed
+        taDebug.setText("");
+        eMensaje.setText("");
+    }//GEN-LAST:event_bOdooTest5ActionPerformed
+
+    private void bOdooTestModeloListar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar3ActionPerformed
+        odooModeloObtener();
+    }//GEN-LAST:event_bOdooTestModeloListar3ActionPerformed
+
+    private void bOdooTestModeloListar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar2ActionPerformed
+        odooModeloActualizar();
+    }//GEN-LAST:event_bOdooTestModeloListar2ActionPerformed
+
+    private void bOdooTestModeloListar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar1ActionPerformed
+        odooModeloInsertar();
+    }//GEN-LAST:event_bOdooTestModeloListar1ActionPerformed
+
+    private void bOdooTestModeloListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListarActionPerformed
+        odooModeloListar();
+    }//GEN-LAST:event_bOdooTestModeloListarActionPerformed
+
+    private void bOdooTestModeloCamposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloCamposActionPerformed
+        odooModeloAtributos();
+    }//GEN-LAST:event_bOdooTestModeloCamposActionPerformed
+
+    private void tOdooTestModeloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tOdooTestModeloActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tOdooTestModeloActionPerformed
+
+    private void bOdooTestModeloPermisosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloPermisosActionPerformed
+        odooModeloPermisos();
+    }//GEN-LAST:event_bOdooTestModeloPermisosActionPerformed
+
+    private void bOdooTestLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestLoginActionPerformed
+        odooLogin();
+    }//GEN-LAST:event_bOdooTestLoginActionPerformed
+
+    private void bOdooTestServidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestServidorActionPerformed
+        odooConexion();
+    }//GEN-LAST:event_bOdooTestServidorActionPerformed
 
     private void odooImprimirRespuesta(HashMap respuesta){
         for (int i = 0; i < respuesta.size(); i++) {
@@ -1701,8 +1711,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 
                 //TAMAÑOS 
                 odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
-                        asList(odooDB, odooUID, odooPassword, "product.attribute",   
-                        "search_read", asList(asList(asList("name", "<>", ""))), new HashMap() {{ put("fields", asList("name"));}}
+                        asList(odooDB, odooUID, odooPassword, "product.product",   
+                        "search_read", asList(asList(asList("valid_product_template_attribute_line_ids", "<>", ""))), new HashMap() {{ put("fields", asList("name"));}}
                         )
                 ));
                 odooTamanho = new Tamanho[odooRegistros.size()];
@@ -1724,7 +1734,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                         "list_price",
                                         "standard_price",
                                         "public_categ_ids",
-                                        "product_template_attribute_value_ids",
+                                        "valid_product_template_attribute_line_ids",
                                         "website_id",
                                         "is_published"));}}
                         //"search_read", emptyList(), emptyMap()
@@ -1747,7 +1757,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     //Definicion de variables a parsear.
                     HashMap registroP = (HashMap) odooRegistros.get(j);
                     Object[] registroC = (Object[]) registroP.get("public_categ_ids");
-                    Object[] registroV = (Object[]) registroP.get("product_template_attribute_value_ids");
+                    Object[] registroV = (Object[]) registroP.get("valid_product_template_attribute_line_ids");
                     Object[] registroW;
                     categorias = new Categoria[registroC.length];
                     tamanho = new Tamanho[registroV.length];
@@ -1939,7 +1949,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                     if(odooUpdateProducto.getCategorias() != null)
                                                         put("public_categ_ids",odooUpdateProducto.getArrayCategorias());
                                                     if(odooUpdateProducto.getCategorias() != null)
-                                                        put("product_template_attribute_value_ids",odooUpdateProducto.getArrayTamanho());
+                                                        put("valid_product_template_attribute_line_ids",odooUpdateProducto.getArrayTamanho());
                                                     //agregar un check dinamico de caracteristicas
                                                 }}
                                                 )
@@ -1978,7 +1988,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                         put("public_categ_ids",odooInsertProducto.getArrayCategorias());
                                                     }
                                                     if(odooInsertProducto.getTamanho() != null){
-                                                        put("product_template_attribute_value_ids",odooInsertProducto.getArrayTamanho());
+                                                        put("valid_product_template_attribute_line_ids",odooInsertProducto.getArrayTamanho());
                                                         
                                                     }
                                                 }}

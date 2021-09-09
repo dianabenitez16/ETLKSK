@@ -11,10 +11,13 @@ package clases;
  */
 public class Tamanho {
     private Integer ID;
-    private String referenciaExterna;
     private String nombre;
 
     public Tamanho() {
+    }
+    
+    public Tamanho(Integer id){
+        setID(id);
     }
 
     public Integer getID() {
@@ -25,14 +28,6 @@ public class Tamanho {
         this.ID = ID;
     }
 
-    public String getReferenciaExterna() {
-        return referenciaExterna;
-    }
-
-    public void setReferenciaExterna(String referenciaExterna) {
-        this.referenciaExterna = referenciaExterna.trim();
-    }
-
     public String getNombre() {
         return nombre;
     }
@@ -41,11 +36,8 @@ public class Tamanho {
         this.nombre = nombre.trim();
     }
     
-    
-    
     public void imprimir(){
         System.out.print("ID: "+this.ID);
-        System.out.print("\tRE: "+this.referenciaExterna);
         System.out.print("\tNO: "+this.nombre);
         System.out.println("");
     }

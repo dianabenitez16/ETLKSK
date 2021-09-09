@@ -5,6 +5,8 @@
  */
 package clases;
 
+import java.util.List;
+
 /**
  *
  * @author Juan Bogado
@@ -13,7 +15,7 @@ public class Producto {
     private Integer ID;
     private String referenciaInterna;
     private Categoria[] categorias;
-    private Tamanho[] tamanho;
+    private List<Tamanho> tamanho;
     private Website website;
     private Boolean publicado;
     
@@ -55,6 +57,14 @@ public class Producto {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public List<Tamanho> getTamanho() {
+        return tamanho;
+    }
+
+    public void setTamanho(List<Tamanho> tamanho) {
+        this.tamanho = tamanho;
     }
 
     public Double getPrecioVenta() {
@@ -137,14 +147,6 @@ public class Producto {
         this.sexo = sexo;
     }
 
-    public Tamanho[] getTamanho() {
-        return tamanho;
-    }
-
-    public void setTamanho(Tamanho[] tamanho) {
-        this.tamanho = tamanho;
-    }
-
     public Categoria[] getCategorias() {
         return categorias;
     }
@@ -176,13 +178,14 @@ public class Producto {
         }
         return resultado;
     }
+    /*
     public Object[] getArrayTamanho(){
         Object[] resultados = new Object[this.tamanho.length];
         for (int i = 0; i < tamanho.length; i++) {
             resultados[i] = tamanho[i].getID();
         }
         return resultados;
-    }
+    }*/
     
     public void imprimir(){
         System.out.println("");

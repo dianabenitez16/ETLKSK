@@ -72,7 +72,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private Website[] odooWebsites;
     private Atributo[] odooAtributos;
     private Categoria[] odooCategorias;
-    private Tamanho[] odooTamanho;
+    private Tamanho[] odooTamanhos;
     private Integer odooUID;
     private String odooURL, odooDB, odooUser, odooPassword;
     
@@ -115,10 +115,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         
         
         odooModeloListarVariantes();
+        odooModeloListarT();
+        
 
         //FOR DEBUG
-        odooTestInsertar();
-        //odooModeloListarT();
+        //odooModeloListar();
+        //odooTestInsertar();
+        //
     }
     
     private boolean loadConfig(){
@@ -303,36 +306,80 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         discvTablaContenido = new Object[registros][SWDVY.consultar.datatypes[0].length];
         registros = 0;
         
+        
+        
+        for (Tamanho odooTamanho : odooTamanhos) {
+            System.out.println("TAMAÑO: "+odooTamanho.getNombre());
+        }
         //LIMPIEZA DE ARRAY
         for (Object[] registro : datosEnProceso) {
+            bandera = false;
+            
+            
+            
             if(registro[0] != null){
-                discvProductos[registros] = new Producto();
-                discvProductos[registros].setReferenciaInterna(registro[0].toString());
-                discvProductos[registros].setNombre(registro[1].toString());
-                discvProductos[registros].setPrecioVenta((Double) registro[2]);
-                discvProductos[registros].setPrecioCosto((Double) registro[3]);
-                discvProductos[registros].setStockTotal((Double) registro[4]);
-                discvProductos[registros].setStockSucursal((Double) registro[5]);
-                if(discvProductos[registros].getStockSucursal() >= (Integer.valueOf(tCantidadMinima.getText()))){
-                    discvProductos[registros].setPublicado(true);
-                }else{
-                    discvProductos[registros].setPublicado(false);
+                //LIMPIAR EL 0 A LA IZQUIERA EN LOS TAMAÑOS
+                System.out.println(registro[0].toString());
+                System.out.println("0,2:"+registro[0].toString().substring(0, 2));
+                System.out.println("0,11:"+registro[0].toString().substring(0, 11));
+                System.out.println("11,13:"+registro[0].toString().substring(11, 13));
+                String tamanhoDISCV = registro[0].toString().substring(11, 13);
+                if(tamanhoDISCV.substring(0, 1).equals("0")){
+                    tamanhoDISCV = tamanhoDISCV.replace("0", "");
+                }
+
+                for (Producto discvProducto : discvProductos) {
+                    if(discvProducto != null){
+                        if(discvProducto.getReferenciaInterna().equals(registro[0].toString().substring(0, 11))){
+                            bandera = true;
+                            //REGISTRAR SOLO EL TAMAÑNO
+
+                            for (Tamanho odooTamanho : odooTamanhos) {    
+                                // ACA NOS QUEDMAOS
+                                if(tamanhoDISCV.equals(odooTamanho.getNombre())){
+                                    discvProductos[registros].getTamanho().add(odooTamanho);
+                                }
+                            }
+                        }
+                    }
+                    
                 }
                 
-                for (Website odooWebsite : odooWebsites) {
-                    if(registro[0].toString().substring(10, 11).equals(odooWebsite.getReferenciaExterna())){
-                        discvProductos[registros].setWebsite(odooWebsite);
+                if(!bandera){
+                    discvProductos[registros] = new Producto();
+                    discvProductos[registros].setReferenciaInterna(registro[0].toString().substring(0, 11));
+                    discvProductos[registros].setNombre(registro[1].toString());
+                    discvProductos[registros].setPrecioVenta((Double) registro[2]);
+                    discvProductos[registros].setPrecioCosto((Double) registro[3]);
+                    discvProductos[registros].setStockTotal((Double) registro[4]);
+                    discvProductos[registros].setStockSucursal((Double) registro[5]);
+                    if(discvProductos[registros].getStockSucursal() >= (Integer.valueOf(tCantidadMinima.getText()))){
+                        discvProductos[registros].setPublicado(true);
+                    }else{
+                        discvProductos[registros].setPublicado(false);
+                    }
+
+                    for (Website odooWebsite : odooWebsites) {
+                        if(registro[0].toString().substring(10, 11).equals(odooWebsite.getReferenciaExterna())){
+                            discvProductos[registros].setWebsite(odooWebsite);
+                        }
+                    }
+                    for (Categoria odooCategoria : odooCategorias) {
+                        if(registro[0].toString().substring(4, 6).equals(odooCategoria.getReferenciaExterna())){
+                            discvProductos[registros].setCategorias(new Categoria[]{odooCategoria});
+                        }
+                    }
+                    for (Tamanho odooTamanho : odooTamanhos) {    
+                        if(tamanhoDISCV.equals(odooTamanho.getNombre())){
+                            //System.out.println("COINCIDE: "+registro[0].toString().substring(4, 6) + " CON: "+odooCategoria.getReferenciaExterna());
+                            discvProductos[registros].setTamanho(new ArrayList());
+                            discvProductos[registros].getTamanho().add(odooTamanho);
+                        }
                     }
                 }
-                for (Categoria odooCategoria : odooCategorias) {
-                    if(registro[0].toString().substring(4, 6).equals(odooCategoria.getReferenciaExterna())){
-                        //System.out.println("COINCIDE: "+registro[0].toString().substring(4, 6) + " CON: "+odooCategoria.getReferenciaExterna());
-                        discvProductos[registros].setCategorias(new Categoria[]{odooCategoria});
-                    }
-                }
-                
                 discvTablaContenido[registros] = registro;
                 registros++;
+                
             }
         }
         
@@ -548,6 +595,9 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jLabel31 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbProductoVariantes = new javax.swing.JTable();
+        bOdooTestModeloListar5 = new javax.swing.JButton();
+        tOdooTestVariantesPythonID = new javax.swing.JTextField();
+        jLabel32 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -783,7 +833,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             }
         });
 
-        tOdooTestModelo.setText("product.product");
+        tOdooTestModelo.setText("product.template.attribute.line");
         tOdooTestModelo.setPreferredSize(new java.awt.Dimension(80, 25));
         tOdooTestModelo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1058,6 +1108,19 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         ));
         jScrollPane3.setViewportView(tbProductoVariantes);
 
+        bOdooTestModeloListar5.setText("Python Producto");
+        bOdooTestModeloListar5.setPreferredSize(new java.awt.Dimension(130, 25));
+        bOdooTestModeloListar5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bOdooTestModeloListar5ActionPerformed(evt);
+            }
+        });
+
+        tOdooTestVariantesPythonID.setPreferredSize(new java.awt.Dimension(80, 25));
+
+        jLabel32.setText("ID");
+        jLabel32.setPreferredSize(new java.awt.Dimension(120, 25));
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -1066,9 +1129,15 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bOdooTestModeloListar4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bOdooTestModeloListar4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bOdooTestModeloListar5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel32, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tOdooTestVariantesPythonID, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel7Layout.createSequentialGroup()
@@ -1107,7 +1176,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     .addComponent(tOdooTestModeloInsertNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(213, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(tOdooTestVariantesPythonID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel32, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bOdooTestModeloListar5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(170, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Test Variantes", jPanel7);
@@ -1481,6 +1556,10 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         odooConexion();
     }//GEN-LAST:event_bOdooTestServidorActionPerformed
 
+    private void bOdooTestModeloListar5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOdooTestModeloListar5ActionPerformed
+        odooInsertarPython();
+    }//GEN-LAST:event_bOdooTestModeloListar5ActionPerformed
+
     private void odooImprimirRespuesta(HashMap respuesta){
         for (int i = 0; i < respuesta.size(); i++) {
             taDebug.append(respuesta.get(i).toString());
@@ -1613,6 +1692,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         if(odooUID != null){
             try {
                 taDebug.append("Obteniendo contenido del modelo. \n");
+                System.out.println("_______________________________________ LISTANDO MODELO: "+tOdooTestModelo.getText().trim());
                 odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
                         asList(odooDB, odooUID, odooPassword, tOdooTestModelo.getText().trim(), 
                         "search_read", emptyList(), emptyMap()
@@ -1621,12 +1701,24 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         )
                 ));
                 
-                taDebug.append("\tID\tREF\tNOMBRE\n");
+                
                 for (Object objeto : odooRegistros) {
                     HashMap registro = (HashMap) objeto;
-                    taDebug.append("\t");
-                    taDebug.append(registro.get("id")+"\t");  
-                    taDebug.append(registro.get("name")+"\n");
+                    Integer columna = 1;
+                    for (Object key : registro.keySet()) {
+                        System.out.println("_"+key);
+                        
+                        if(registro.get(key) instanceof Object[]){
+                            for (Object subObject : ((Object[]) registro.get(key))) {
+                                System.out.println("\t"+subObject.toString());
+                            }
+                        }else{
+                            System.out.println("\t"+registro.get(key));
+                        }
+                        columna++;
+                    }
+                    System.out.println("_____________________________________________________");
+                    
                 }
                 
                 taDebug.append("Se encontraron: "+ odooRegistros.size() +" campos disponibles en "+tOdooTestModelo.getText().trim()+".\n");
@@ -1677,18 +1769,24 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 }
                 
                 //TAMAÑOS 
-                odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
-                        asList(odooDB, odooUID, odooPassword, "product.product",   
-                        "search_read", asList(asList(asList("valid_product_template_attribute_line_ids", "<>", ""))), new HashMap() {{ put("fields", asList("name"));}}
+                List<Object> valoresTamanho = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
+                        asList(odooDB, odooUID, odooPassword, "product.attribute",   
+                        "search_read", asList(asList(asList("name", "=", "Tamaño"))), 
+                        new HashMap() {{ put("fields", asList("value_ids"));}}
                         )
                 ));
-                odooTamanho = new Tamanho[odooRegistros.size()];
+                HashMap registroVT = (HashMap) valoresTamanho.get(0);
+                odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
+                        asList(odooDB, odooUID, odooPassword, "product.attribute.value",   
+                        "search_read", asList(asList(asList("attribute_id", "=", registroVT.get("id")))), new HashMap() {{ put("fields", asList("name"));}}
+                        )
+                ));
+                odooTamanhos = new Tamanho[odooRegistros.size()];
                 for (int j = 0; j < odooRegistros.size(); j++) {
                     HashMap registroV = (HashMap) odooRegistros.get(j);
-                    odooTamanho[j] = new Tamanho();
-                    odooTamanho[j].setID((Integer) registroV.get("id"));
-                    odooTamanho[j].setNombre((String) registroV.get("name"));
-                  
+                    odooTamanhos[j] = new Tamanho();
+                    odooTamanhos[j].setID((Integer) registroV.get("id"));
+                    odooTamanhos[j].setNombre((String) registroV.get("name"));
                 }
                 
                 // PRODUCTOS
@@ -1717,7 +1815,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     //Definicion de variables finales
                     Producto producto = new Producto();
                     Categoria[] categorias;
-                    Tamanho[] tamanho;
+                    List<Tamanho> tamanho;
                     Website website = new Website();
                     
                     
@@ -1727,7 +1825,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     Object[] registroV = (Object[]) registroP.get("valid_product_template_attribute_line_ids");
                     Object[] registroW;
                     categorias = new Categoria[registroC.length];
-                    tamanho = new Tamanho[registroV.length];
+                    tamanho = new ArrayList();
+
                     //WEBSITE
                     if(registroP.get("website_id") instanceof Object[] ){
                         registroW = (Object[]) registroP.get("website_id");
@@ -1741,8 +1840,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     }
                     //VARIANTES
                     for (int i = 0; i < registroV.length; i++) {
-                        tamanho[i] = new Tamanho();
-                        tamanho[i].setID((Integer) registroV[i]);   
+                        tamanho.add(new Tamanho((Integer) registroV[i]));
                     }
                     
                     //SET DE VALORES EN VARIABLE FINAL
@@ -2009,13 +2107,14 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                     put("website_id", odooUpdateProducto.getWebsite().getID());
                                                     if(odooUpdateProducto.getCategorias() != null)
                                                         put("public_categ_ids",odooUpdateProducto.getArrayCategorias());
-                                                    if(odooUpdateProducto.getCategorias() != null)
-                                                        put("valid_product_template_attribute_line_ids",odooUpdateProducto.getArrayTamanho());
-                                                    //agregar un check dinamico de caracteristicas
                                                 }}
                                                 )
                                 )
                         );
+                        
+                        //ACTUALIZAR product.template.attribute.line con los TAMANHOS del PRODUCTO
+                        //LISTAR TAMAÑOS
+                        //ACTUALIZAR TAMANHOS
                         
                         if(odooBandera){
                             contadorUpdate++;
@@ -2048,14 +2147,14 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                     if(odooInsertProducto.getCategorias() != null){
                                                         put("public_categ_ids",odooInsertProducto.getArrayCategorias());
                                                     }
-                                                    if(odooInsertProducto.getTamanho() != null){
-                                                        put("valid_product_template_attribute_line_ids",odooInsertProducto.getArrayTamanho());
-                                                        
-                                                    }
                                                 }}
                                                 )
                                 )
                         );
+                        
+                        //ACTUALIZAR product.template.attribute.line con los TAMANHOS del PRODUCTO
+                        //LISTAR TAMAÑOS
+                        //ACTUALIZAR TAMANHOS
                         
                         if(odooID instanceof Integer){
                             contadorInsert++;
@@ -2221,38 +2320,126 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
      
     private void odooTestInsertar(){
         try {
+            HashMap registroP;
+            odooID = 0;
             
-            //odooInsertProducto.imprimir();
-            final Integer odooID = (Integer) odooCliente.execute(odooConfigObject, "execute_kw",
-                    asList(odooDB, odooUID, odooPassword, "product.product",
-                            "create", asList( 
-                                    new HashMap(){{
-                                        put("default_code", "FALDAP");
-                                        put("name", "SHORT");
-                                        put("list_price", 100000);
-                                        put("standard_price", 50000);
-                                        put("is_published", true);
-                                        put("website_id", 1);  
-                                    }}
-                            )
+            // BUSCAR SI YA EXISTE EL PRODUCTO
+            odooRegistros = asList((Object[]) odooCliente.execute(
+                    odooConfigObject, "execute_kw", asList(odooDB, odooUID, odooPassword, "product.product", 
+                            "search_read", asList(asList(asList("name","=","SHORT CON VARIANTES")))
                     )
-            );
+            ));
             
-            if(odooID != 0){
-                System.out.println("Actualizando el producto: "+odooID);
-                odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
-                    asList(odooDB, odooUID, odooPassword, "product.product",
-                        "write", asList(asList(odooID),
+            //CREAR SI NO EXISTE
+            if(odooRegistros.isEmpty()){
+                odooID = (Integer) odooCliente.execute(odooConfigObject, "execute_kw",
+                        asList(odooDB, odooUID, odooPassword, "product.product",
+                                "create", asList( 
+                                        new HashMap(){{
+                                            put("default_code", "SHORT-C00");
+                                            put("name", "SHORT CON VARIANTES");
+                                            put("list_price", 100000);
+                                            put("standard_price", 50000);
+                                            put("is_published", true);
+                                            put("website_id", 1);  
+                                        }}
+                                )
+                        )
+                );
+            }else{
+                for (Object odooRegistro : odooRegistros) {
+                    registroP = (HashMap) odooRegistro;
+                    odooID = (Integer) registroP.get("id");
+                    System.out.println("Encontrado el SHORT CON VARIANTES con el ID: "+odooID);
+                }
+            }
+            
+            //LEER EL PRODUCTO
+            odooRegistros = asList((Object[]) odooCliente.execute(
+                            odooConfigObject, "execute_kw", asList(odooDB, odooUID, odooPassword, "product.product", 
+                                    "read", asList((odooID))
+                            )
+                    ));
+            
+            for (Object odooRegistro : odooRegistros) {
+                registroP = (HashMap) odooRegistro;
+                Integer product_tmpl_id = Integer.valueOf(((Object[]) registroP.get("product_tmpl_id"))[0].toString());
+                System.out.println("PRODUCTO_ID: "+ registroP.get("id") + "\tNAME: "+registroP.get("name")+"\tTEMPLATE_ID: "+product_tmpl_id);
+                
+                
+            //ACTUALIZAR ATRIBUTOS    
+                Boolean creo = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
+                    asList(odooDB, odooUID, odooPassword, "product.template.attribute.line",
+                        "write", asList(asList(47),
                             new HashMap(){{
-                                put("attribute_line_ids", asList(0,2));
+                                put("product_tmpl_id", product_tmpl_id);
+                                put("attribute_id", 2);
+                                put("value_ids", asList(5,6));
                             }}
                         )
                     )
                 );
+                
             }
                      
 
             
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void odooInsertarPython(){
+        System.out.println("___________________________________________________");
+        try {
+            List<Object> productoAtributos;
+            List<Object> modeloAtributos;
+            odooRegistros = asList((Object[]) odooCliente.execute(
+                    odooConfigObject, "execute_kw", asList(odooDB, odooUID, odooPassword, "product.product", 
+                            "search_read", emptyList() , emptyMap()
+                    )
+            ));
+
+            //DEBUG        
+            for (Object odooRegistro : odooRegistros) {
+                HashMap registroP = (HashMap) odooRegistro;
+                System.out.println("ID: "+registroP.get("id")+"\tNAME:"+registroP.get("name")+"\tREF:"+registroP.get("default_code"));
+                for (Object object : ((Object[]) registroP.get("product_tmpl_id"))) {
+                    System.out.println("\t TMPL_ID: "+object.toString());
+                }
+                for (Object object : ((Object[]) registroP.get("attribute_line_ids"))) {
+                    System.out.println("\t TMPL_ATTR_ID: "+object.toString());
+                    productoAtributos = asList((Object[]) odooCliente.execute(
+                            odooConfigObject, "execute_kw", asList(odooDB, odooUID, odooPassword, "product.template.attribute.line", 
+                                    "read", asList((object))
+                            )
+                    ));
+                    for (Object productoAtributo : productoAtributos) {
+                        HashMap registroAV = (HashMap) productoAtributo;
+                        System.out.println("\t\t TMPL DISPLAY_NAME: "+registroAV.get("display_name"));
+                        for (Object value : ((Object[]) registroAV.get("value_ids"))) {
+                            System.out.println("\t\t VALUE_ID: "+value);
+                            modeloAtributos = asList((Object[]) odooCliente.execute(
+                                odooConfigObject, "execute_kw", asList(odooDB, odooUID, odooPassword, "product.attribute.value", 
+                                        "read", asList((value))
+                                )
+                            ));
+                            for (Object modeloAtributo : modeloAtributos) {
+                                HashMap registroMA = (HashMap) modeloAtributo;
+                                System.out.println("\t\t\t"+registroMA.get("display_name"));
+                            }
+                        }
+                    }
+                    
+                    
+                }
+                
+                
+                System.out.println("");
+            }
+
+
+
         } catch (XmlRpcException ex) {
             Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2307,6 +2494,24 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         }else{
             eMensaje.setText("Inicie sesión, antes de realizar consultas. ");
             eMensaje.setForeground(Color.red);
+        }
+    }
+    
+    private void imprimirOdooRegistros(){
+        for (Object odooRegistro : odooRegistros) {
+            if(odooRegistro instanceof Object[]){
+                for (Object registro : ((Object[]) odooRegistro)) {
+                    if(registro instanceof Object[]){
+                        for (Object registrito : ((Object[]) registro)) {
+                            System.out.println(registrito.toString());
+                        }
+                    }else{
+                        System.out.println(registro.toString());
+                    }
+                }
+            }else{
+                System.out.println(odooRegistro.toString());
+            }
         }
     }
     private void odooVarios(){
@@ -2430,6 +2635,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JButton bOdooTestModeloListar2;
     private javax.swing.JButton bOdooTestModeloListar3;
     private javax.swing.JButton bOdooTestModeloListar4;
+    private javax.swing.JButton bOdooTestModeloListar5;
     private javax.swing.JButton bOdooTestModeloPermisos;
     private javax.swing.JButton bOdooTestServidor;
     private javax.swing.JButton bSeleccionarMaestroCategorias;
@@ -2461,6 +2667,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
@@ -2499,6 +2706,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private javax.swing.JTextField tOdooTestModeloInsertRefenciaExterna1;
     private javax.swing.JTextField tOdooTestModeloUpdateNombre;
     private javax.swing.JTextField tOdooTestModeloUpdateReferenciaExterna;
+    private javax.swing.JTextField tOdooTestVariantesPythonID;
     private javax.swing.JTextField tOdooUID;
     private javax.swing.JTextField tOdooVersion;
     private javax.swing.JTable tProductos;

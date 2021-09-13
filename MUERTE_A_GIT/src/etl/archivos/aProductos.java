@@ -73,6 +73,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private Atributo[] odooAtributos;
     private Categoria[] odooCategorias;
     private Tamanho[] odooTamanhos;
+    private Tamanho[] odooTamanhosValueTemplate;
     private Integer odooUID;
     private String odooURL, odooDB, odooUser, odooPassword;
     
@@ -80,6 +81,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     
     private List<Producto> odooUpdateProductos;
     private List<Producto> odooInsertProductos;
+    private List<Producto> odooCreateProductos;
     private List<Producto> odooDeleteProductos;
     private List<Producto> odooNoneProductos;
     
@@ -113,7 +115,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         odooStart();
         odooLogin();
         
-        
+        odooMaestrosEcommerce();
         odooModeloListarVariantes();
         odooModeloListarT();
         
@@ -303,26 +305,38 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         
         
         discvProductos = new Producto[registros];
-        discvTablaContenido = new Object[registros][SWDVY.consultar.datatypes[0].length];
+        //discvTablaContenido = new Object[registros][SWDVY.consultar.datatypes[0].length];
         registros = 0;
         
         
-        
-        for (Tamanho odooTamanho : odooTamanhos) {
-            System.out.println("TAMAÑO: "+odooTamanho.getNombre());
+        // VERIFICAR QUE TODOS LOS TAMAÑOS DE DISCOVERY, EXISTAN EN ODOO
+        // ESTO NO FUNCIONA
+        List<String> nuevosTamanhos = new ArrayList();
+        Boolean nuevoTamanho;
+        for (Object[] registro : datosEnProceso) {
+            for (Tamanho odooTamanho : odooTamanhos) {
+                nuevoTamanho = true;
+                String tamanhoDISCV = registro[0].toString().substring(11, 13);
+                if(tamanhoDISCV.substring(0, 1).equals("0")){
+                    tamanhoDISCV = tamanhoDISCV.replace("0", "");
+                }
+                if(tamanhoDISCV.contains(odooTamanho.getNombre())){
+                   nuevoTamanho = false;
+                }
+                
+            }
+            
+            
         }
+        
+        
+        
         //LIMPIEZA DE ARRAY
         for (Object[] registro : datosEnProceso) {
             bandera = false;
             
-            
-            
             if(registro[0] != null){
                 //LIMPIAR EL 0 A LA IZQUIERA EN LOS TAMAÑOS
-                System.out.println(registro[0].toString());
-                System.out.println("0,2:"+registro[0].toString().substring(0, 2));
-                System.out.println("0,11:"+registro[0].toString().substring(0, 11));
-                System.out.println("11,13:"+registro[0].toString().substring(11, 13));
                 String tamanhoDISCV = registro[0].toString().substring(11, 13);
                 if(tamanhoDISCV.substring(0, 1).equals("0")){
                     tamanhoDISCV = tamanhoDISCV.replace("0", "");
@@ -336,8 +350,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
 
                             for (Tamanho odooTamanho : odooTamanhos) {    
                                 // ACA NOS QUEDMAOS
-                                if(tamanhoDISCV.equals(odooTamanho.getID())){
-                                    discvProductos[registros].getTamanho().add(odooTamanho);
+                                if(tamanhoDISCV.equals(odooTamanho.getNombre())){
+                                    discvProductos[registros].setTamanho(odooTamanho);
                                 }
                             }
                         }
@@ -347,6 +361,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 
                 if(!bandera){
                     discvProductos[registros] = new Producto();
+                    discvProductos[registros].setCodigoDISCV(registro[0].toString());
                     discvProductos[registros].setReferenciaInterna(registro[0].toString().substring(0, 11));
                     discvProductos[registros].setNombre(registro[1].toString());
                     discvProductos[registros].setPrecioVenta((Double) registro[2]);
@@ -372,18 +387,47 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     for (Tamanho odooTamanho : odooTamanhos) {    
                         if(tamanhoDISCV.equals(odooTamanho.getNombre())){
                             //System.out.println("COINCIDE: "+registro[0].toString().substring(4, 6) + " CON: "+odooCategoria.getReferenciaExterna());
-                            discvProductos[registros].setTamanho(new ArrayList());
-                            discvProductos[registros].getTamanho().add(odooTamanho);
+                            discvProductos[registros].setTamanho(odooTamanho);
                         }
                     }
                 }
-                discvTablaContenido[registros] = registro;
+                
                 registros++;
                 
             }
         }
         
-        DefaultTableModel modelo = new DefaultTableModel(discvTablaContenido, SWDVY.consultar.encabezado[0]);
+        
+        //ARMADO DE TABLE MODEL
+        discvTablaContenido = new Object[registros][10];
+        Integer linea = 0;
+        for (Producto discvProducto : discvProductos) {
+            discvTablaContenido[linea][0] = discvProducto.getCodigoDISCV();
+            discvTablaContenido[linea][1] = discvProducto.getReferenciaInterna();
+            if(discvProducto.getTamanho() != null){
+                discvTablaContenido[linea][2] = discvProducto.getTamanho().getNombre();
+            }else{
+                System.out.println("En ODOO no existe el tamaño del producto: "+discvProducto.getReferenciaInterna());
+            }
+            
+            discvTablaContenido[linea][3] = discvProducto.getNombre();
+            discvTablaContenido[linea][4] = discvProducto.getPrecioVenta();
+            discvTablaContenido[linea][5] = discvProducto.getPrecioCosto();
+            discvTablaContenido[linea][6] = discvProducto.getStockTotal();
+            discvTablaContenido[linea][7] = discvProducto.getStockSucursal();
+            discvTablaContenido[linea][8] = discvProducto.getWebsite().getNombre();
+            discvTablaContenido[linea][9] = discvProducto.getCategorias()[0].getNombre();
+            
+            
+            linea++;
+            
+        }
+        
+        DefaultTableModel modelo = new DefaultTableModel(
+                discvTablaContenido, 
+        new String [] {
+                "Codigo", "Ref. Int.","Tamaño", "Descripcion", "Venta", "Costo", "StockTotal", "StockSucursal", "WebSite", "Categoria"
+            });
         TableRowSorter<TableModel> sorter = new TableRowSorter<>((TableModel) modelo);
         sorter.toggleSortOrder(1);
         tProductos.setModel(modelo);
@@ -634,7 +678,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
 
             },
             new String [] {
-                "Codigo", "Descripcion", "Venta", "Costo", "StockTotal", "StockSucursal", "WebSite", "Categoria"
+                "Codigo", "Ref. Int.", "Tamaño", "Descripcion", "Venta", "Costo", "StockTotal", "StockSucursal", "WebSite", "Categoria"
             }
         ));
         spProductos.setViewportView(tProductos);
@@ -1707,12 +1751,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     HashMap registro = (HashMap) objeto;
                     Integer columna = 1;
                     for (Object key : registro.keySet()) {
-                        System.out.println("_"+key);
+                        System.out.print("_"+key+": ");
                         
                         if(registro.get(key) instanceof Object[]){
                             for (Object subObject : ((Object[]) registro.get(key))) {
-                                System.out.println("\t"+subObject.toString());
+                                System.out.print(", "+subObject.toString());
                             }
+                            System.out.println("");
                         }else{
                             System.out.println("\t"+registro.get(key));
                         }
@@ -1738,56 +1783,23 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     private void odooModeloListarT(){
         if(odooUID != null){
             try {
-                // WEBSITES
+                
+                
+                //TAMAÑOS TEMPLATE
                 odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
-                        asList(odooDB, odooUID, odooPassword, "website", 
-                        "search_read", emptyList(), emptyMap()
+                        asList(odooDB, odooUID, odooPassword, "product.template.attribute.value",   
+                        "search_read", emptyList(), new HashMap() {{ put("fields", asList("name","attribute_line_id"));}}
                         )));
-                odooWebsites = new Website[odooRegistros.size()];
-                for (int i = 0; i < odooRegistros.size(); i++) {
-                    HashMap registroW = (HashMap) odooRegistros.get(i);
-                    odooWebsites[i] = new Website();
-                    odooWebsites[i].setID((Integer) registroW.get("id"));
-                    odooWebsites[i].setNombre((String) registroW.get("name"));
-                    odooWebsites[i].setReferenciaExterna((String) registroW.get("x_referencia_externa"));
-                    odooWebsites[i].setUrl((String) registroW.get("domain"));
-                }
                 
-                
-                // CATEGORIAS
-                odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
-                        asList(odooDB, odooUID, odooPassword, "product.public.category", 
-                        "search_read", asList(asList(asList("x_referencia_externa", "<>", ""))), new HashMap() {{ put("fields", asList("name", "x_referencia_externa"));}}
-                        )
-                ));
-                odooCategorias = new Categoria[odooRegistros.size()];
+                odooTamanhosValueTemplate = new Tamanho[odooRegistros.size()];
                 for (int i = 0; i < odooRegistros.size(); i++) {
                     HashMap registroC = (HashMap) odooRegistros.get(i);
-                    odooCategorias[i] = new Categoria();
-                    odooCategorias[i].setID((Integer) registroC.get("id"));
-                    odooCategorias[i].setNombre((String) registroC.get("name"));
-                    odooCategorias[i].setReferenciaExterna((String) registroC.get("x_referencia_externa"));
-                }
-                
-                //TAMAÑOS 
-                List<Object> valoresTamanho = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
-                        asList(odooDB, odooUID, odooPassword, "product.attribute",   
-                        "search_read", asList(asList(asList("name", "=", "Tamaño"))), 
-                        new HashMap() {{ put("fields", asList("value_ids"));}}
-                        )
-                ));
-                HashMap registroVT = (HashMap) valoresTamanho.get(0);
-                odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
-                        asList(odooDB, odooUID, odooPassword, "product.attribute.value",   
-                        "search_read", asList(asList(asList("attribute_id", "=", registroVT.get("id")))), new HashMap() {{ put("fields", asList("name"));}}
-                        )
-                ));
-                odooTamanhos = new Tamanho[odooRegistros.size()];
-                for (int j = 0; j < odooRegistros.size(); j++) {
-                    HashMap registroV = (HashMap) odooRegistros.get(j);
-                    odooTamanhos[j] = new Tamanho();
-                    odooTamanhos[j].setID((Integer) registroV.get("id"));
-                    odooTamanhos[j].setNombre((String) registroV.get("name"));
+                    Object[] registroAtributo = (Object[]) registroC.get("attribute_line_id");
+                    
+                    odooTamanhosValueTemplate[i] = new Tamanho();
+                    odooTamanhosValueTemplate[i].setIdTemplateValor((Integer) registroC.get("id"));
+                    odooTamanhosValueTemplate[i].setNombre((String) registroC.get("name"));
+                    odooTamanhosValueTemplate[i].setIdTemplateAtributo((Integer) registroAtributo[0]);
                 }
                 
                 // PRODUCTOS
@@ -1800,6 +1812,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                         "list_price",
                                         "standard_price",
                                         "public_categ_ids",
+                                        "has_configurable_attributes",
+                                        "product_template_attribute_value_ids",
                                         "valid_product_template_attribute_line_ids",
                                         "website_id",
                                         "is_published"));}}
@@ -1809,58 +1823,74 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         )
                 ));
                 
+                Integer linea = 0;
                 odooProductos = new Producto[odooRegistros.size()];
-                
-                
                 for (int j = 0; j < odooRegistros.size(); j++) {
-                    //Definicion de variables finales
-                    Producto producto = new Producto();
-                    Categoria[] categorias;
-                    List<Tamanho> tamanho;
-                    Website website = new Website();
-                    
-                    
                     //Definicion de variables a parsear.
                     HashMap registroP = (HashMap) odooRegistros.get(j);
                     Object[] registroC = (Object[]) registroP.get("public_categ_ids");
-                    Object[] registroV = (Object[]) registroP.get("valid_product_template_attribute_line_ids");
+                    Object[] registroV = (Object[]) registroP.get("product_template_attribute_value_ids");
                     Object[] registroW;
-                    categorias = new Categoria[registroC.length];
-                    tamanho = new ArrayList();
+                    
+                    //RECORRIDO POR CADA VARIANTE, PARA CREAR UN PRODUCTO POR VARIANTE
+                    for (Object tamanhoV : registroV) { 
+                        //Definicion de variables finales
+                        Producto producto = new Producto();
+                        Categoria[] categoriasV = new Categoria[registroC.length];
+                        Website websiteV = new Website();
+                        Tamanho tamanho = new Tamanho();
+                        tamanho.setIdTemplateValor(((Integer)tamanhoV));
+                        
+                        
+                        //WEBSITE
+                        if(registroP.get("website_id") instanceof Object[] ){
+                            registroW = (Object[]) registroP.get("website_id");
+                            for (Website odooWebsite : odooWebsites) {
+                                if(((Integer) registroW[0]).equals(odooWebsite.getID())){
+                                    websiteV = odooWebsite;
+                                }
+                            }
+                        }
 
-                    //WEBSITE
-                    if(registroP.get("website_id") instanceof Object[] ){
-                        registroW = (Object[]) registroP.get("website_id");
-                        website.setID((Integer) registroW[0]);
+                        //CATEGORIAS
+                        for (int i = 0; i < registroC.length; i++) { 
+                            for (Categoria odooCategoria : odooCategorias) {
+                                if(((Integer) registroC[i]).equals(odooCategoria.getID())){
+                                    categoriasV[i] = odooCategoria;
+                                }
+                            }
+                        }
+
+                        //TAMAÑO
+                        for (Tamanho tamanhoVT : odooTamanhosValueTemplate) {
+                            if(tamanho.getIdTemplateValor().equals(tamanhoVT.getIdTemplateValor())){
+                                tamanho = tamanhoVT;
+                            }
+                        }
+
+                        //SET DE VALORES EN VARIABLE FINAL
+                        producto.setID((Integer) registroP.get("id"));
+                        producto.setReferenciaInterna(registroP.get("default_code").toString());
+                        producto.setNombre(registroP.get("name").toString());
+                        producto.setPrecioVenta((Double) registroP.get("list_price"));
+                        producto.setPrecioCosto((Double) registroP.get("standard_price"));
+                        producto.setCategorias(categoriasV);
+                        producto.setTamanho(tamanho);
+                        producto.setWebsite(websiteV); 
+                        producto.setPublicado((Boolean) registroP.get("is_published"));
+                        odooProductos[linea] = producto;
+                        linea++;
                     }
-                    
-                    //CATEGORIAS
-                    for (int i = 0; i < registroC.length; i++) {
-                        categorias[i] = new Categoria();
-                        categorias[i].setID((Integer) registroC[i]);   
-                    }
-                    //VARIANTES
-                    for (int i = 0; i < registroV.length; i++) {
-                        tamanho.add(new Tamanho((Integer) registroV[i]));
-                    }
-                    
-                    //SET DE VALORES EN VARIABLE FINAL
-                    producto.setID((Integer) registroP.get("id"));
-                    producto.setReferenciaInterna(registroP.get("default_code").toString());
-                    producto.setNombre(registroP.get("name").toString());
-                    producto.setPrecioVenta((Double) registroP.get("list_price"));
-                    producto.setPrecioCosto((Double) registroP.get("standard_price"));
-                    producto.setCategorias(categorias);
-                    producto.setTamanho(tamanho);
-                    producto.setWebsite(website); 
-                    producto.setPublicado((Boolean) registroP.get("is_published"));
-                    odooProductos[j] = producto;
                 }
+                
+                System.out.println("Se procesaron "+odooProductos.length+" prodcutos.");
                 
                 // CARGA DE TABLA
                 Object[][] odooTablaContenido = new Object[odooProductos.length][9];
                 //Object[] tablaEncabezado = 
                 for (int i = 0; i < odooProductos.length; i++) {
+                    // SI DA NULLPOINTER ACA ES PORQUE EL PRODUCTO NO TIENE VARIANTE, POR LO TANTO EL REGISTRO ES NULL
+                    System.out.println("Linea "+i+". Producto: "+odooProductos[i].getReferenciaInterna());
                     odooTablaContenido[i][0] = odooProductos[i].getID();
                     odooTablaContenido[i][1] = odooProductos[i].getReferenciaInterna();
                     odooTablaContenido[i][2] = odooProductos[i].getNombre();
@@ -1868,15 +1898,11 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     odooTablaContenido[i][4] = odooProductos[i].getPrecioCosto();
                     String tablaConteniadoCategorias = "";
                     for (Categoria x : odooProductos[i].getCategorias()) {
-                        tablaConteniadoCategorias += x.getID()+", ";
+                        tablaConteniadoCategorias += x.getReferenciaExterna()+" ";
                     }
                     odooTablaContenido[i][5] = tablaConteniadoCategorias;
-                    String tablaContenidoTamanhos = "";
-                    for (Tamanho x : odooProductos[i].getTamanho()) {
-                        tablaContenidoTamanhos += x.getID()+", ";
-                    }
-                    odooTablaContenido[i][6] = tablaContenidoTamanhos;
-                    odooTablaContenido[i][7] = odooProductos[i].getWebsite().getID();
+                    odooTablaContenido[i][6] = odooProductos[i].getTamanho().getNombre();
+                    odooTablaContenido[i][7] = odooProductos[i].getWebsite().getNombre();
                     odooTablaContenido[i][8] = odooProductos[i].getPublicado().toString();
                 }
                  
@@ -1899,9 +1925,72 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         }        
     }
     
+    private void odooMaestrosEcommerce(){
+        try {
+            // WEBSITES
+            odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw",
+                    asList(odooDB, odooUID, odooPassword, "website",
+                            "search_read", emptyList(), emptyMap()
+                    )));
+            odooWebsites = new Website[odooRegistros.size()];
+            for (int i = 0; i < odooRegistros.size(); i++) {
+                HashMap registroW = (HashMap) odooRegistros.get(i);
+                odooWebsites[i] = new Website();
+                odooWebsites[i].setID((Integer) registroW.get("id"));
+                odooWebsites[i].setNombre((String) registroW.get("name"));
+                odooWebsites[i].setReferenciaExterna((String) registroW.get("x_referencia_externa"));
+                odooWebsites[i].setUrl((String) registroW.get("domain"));
+            }
+            
+            // CATEGORIAS
+            odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw",
+                    asList(odooDB, odooUID, odooPassword, "product.public.category",
+                            "search_read", asList(asList(asList("x_referencia_externa", "<>", ""))), new HashMap() {{ put("fields", asList("name", "x_referencia_externa"));}}
+                    )
+            ));
+            odooCategorias = new Categoria[odooRegistros.size()];
+            for (int i = 0; i < odooRegistros.size(); i++) {
+                HashMap registroC = (HashMap) odooRegistros.get(i);
+                odooCategorias[i] = new Categoria();
+                odooCategorias[i].setID((Integer) registroC.get("id"));
+                odooCategorias[i].setNombre((String) registroC.get("name"));
+                odooCategorias[i].setReferenciaExterna((String) registroC.get("x_referencia_externa"));
+            }
+            
+            //TAMAÑOS
+            List<Object> valoresTamanho = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw",
+                    asList(odooDB, odooUID, odooPassword, "product.attribute",
+                            "search_read", asList(asList(asList("name", "=", "Tamaño"))),
+                            new HashMap() {{ put("fields", asList("value_ids"));}}
+                    )
+            ));
+            HashMap registroVT = (HashMap) valoresTamanho.get(0);
+            odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw",
+                    asList(odooDB, odooUID, odooPassword, "product.attribute.value",
+                            "search_read", asList(asList(asList("attribute_id", "=", registroVT.get("id")))), new HashMap() {{ put("fields", asList("name","attribute_id"));}}
+                    )
+            ));
+            odooTamanhos = new Tamanho[odooRegistros.size()];
+            for (int j = 0; j < odooRegistros.size(); j++) {
+                HashMap registroV = (HashMap) odooRegistros.get(j);
+                Object[] registroAtributo = (Object[]) registroV.get("attribute_id");
+                
+                odooTamanhos[j] = new Tamanho();
+                odooTamanhos[j].setIdValor((Integer) registroV.get("id"));
+                odooTamanhos[j].setNombre((String) registroV.get("name"));
+                odooTamanhos[j].setIdAtributo((Integer) registroAtributo[0]);
+            }
+        } catch (XmlRpcException ex) {
+            Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
+    }
+    
     private void odooModeloListarVariantes(){
         if(odooUID != null){
-            try {// ATRIBUTOS
+            try {
+                
+                // ATRIBUTOS
                 odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
                         asList(odooDB, odooUID, odooPassword, "product.attribute", 
                         "search_read", emptyList(), emptyMap()
@@ -1913,7 +2002,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     odooAtributos[i] = new Atributo();
                     odooAtributos[i].setID((Integer) registroA.get("id"));
                     odooAtributos[i].setNombre((String) registroA.get("name"));
-                    System.out.println("ATRIBUTOS: "+odooAtributos[i].getNombre());
+                    //System.out.println("ATRIBUTOS: "+odooAtributos[i].getNombre());
                 }
                 
                 // ATRIBUTOS VALORES
@@ -1961,14 +2050,15 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 // CARGA DE TABLA
                 Object[][] odooTablaContenido = new Object[odooRegistros.size()][4];
                 
+                Integer linea = 0;
                 for (int i = 0; i < odooAtributos.length; i++) {
-                    System.out.println("ATR: "+odooAtributos[i].getNombre());
                     if(odooAtributos[i].getValores() != null){
                         for (int j = 0; j < odooAtributos[i].getValores().length; j++) {
-                            odooTablaContenido[j][0] = odooAtributos[i].getID();
-                            odooTablaContenido[j][1] = odooAtributos[i].getNombre();
-                            odooTablaContenido[j][2] = odooAtributos[i].getValores()[j].getId();
-                            odooTablaContenido[j][3] = odooAtributos[i].getValores()[j].getNombre();
+                            odooTablaContenido[linea][0] = odooAtributos[i].getID();
+                            odooTablaContenido[linea][1] = odooAtributos[i].getNombre();
+                            odooTablaContenido[linea][2] = odooAtributos[i].getValores()[j].getId();
+                            odooTablaContenido[linea][3] = odooAtributos[i].getValores()[j].getNombre();
+                            linea++;
                         }
                     }
                     
@@ -1998,6 +2088,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             if(discvProductos != null){
                 odooUpdateProductos = new ArrayList<> (); 
                 odooInsertProductos = new ArrayList<> (); 
+                odooCreateProductos = new ArrayList<> (); //Nuevas variantes
                 odooDeleteProductos = new ArrayList<> (); 
                 odooNoneProductos = new ArrayList<> (); 
                 
@@ -2007,43 +2098,55 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                 
                 
                 //RECORRIDO DISCOVERY
-                
                 for (Producto discvProducto : discvProductos) {
                     productoNuevo = true;
+                    // CRUZADO CON ODOO
                     for (Producto odooProducto : odooProductos) {
                         if(discvProducto.getReferenciaInterna().equals(odooProducto.getReferenciaInterna())){
-                            productoNuevo = false;
-                            // URGENTE MEJORAR ESTE DISPARATE
-                            if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
-                                odooNoneProductos.add(odooProducto);
-                            }else if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && !odooProducto.getPublicado()){
-                                odooProducto.setPublicado(true);
-                                odooProducto.setCategorias(discvProducto.getCategorias());
-                                odooProducto.setTamanho(discvProducto.getTamanho());
-                                    
-                                odooUpdateProductos.add(odooProducto);
-                            }else if(discvProducto.getStockSucursal() <= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
-                                odooProducto.setPublicado(false);
-                                odooProducto.setCategorias(discvProducto.getCategorias());
-                                odooProducto.setTamanho(discvProducto.getTamanho());
-                                
-                                
-                                odooUpdateProductos.add(odooProducto);
-                                
-                                    
-                                
-                            }else{
-                                odooNoneProductos.add(odooProducto);
+                            if(discvProducto.getTamanho().getNombre().equals(odooProducto.getTamanho().getNombre())){
+                                // SI CORRESPONDE REFERENCIA Y TAMAÑO
+                                productoNuevo = false;
+                                System.out.println("PRODUCTO ENCONTRADO EN ODOO.");
+                                // URGENTE MEJORAR ESTE DISPARATE
+                                if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
+                                    odooNoneProductos.add(odooProducto);
+                                }else if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && !odooProducto.getPublicado()){
+                                    odooProducto.setPublicado(true);
+                                    odooProducto.setCategorias(discvProducto.getCategorias());
+                                    odooProducto.setTamanho(discvProducto.getTamanho());
+
+                                    odooUpdateProductos.add(odooProducto);
+                                }else if(discvProducto.getStockSucursal() <= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
+                                    odooProducto.setPublicado(false);
+                                    odooProducto.setCategorias(discvProducto.getCategorias());
+                                    odooProducto.setTamanho(discvProducto.getTamanho());
+
+                                    odooUpdateProductos.add(odooProducto);
+                                }else{
+                                    odooNoneProductos.add(odooProducto);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // DETERMINAR SI ES PRODUCTO NUEVO O NUEVA VARIANTE
+                    if(productoNuevo){
+                        for (Producto odooInsertProducto : odooInsertProductos) {
+                            if(odooInsertProducto.getReferenciaInterna().equals(discvProducto.getReferenciaInterna())){
+                                productoNuevo = false;
                             }
                         }
                         
-                    }
-                    if(productoNuevo){
-                        odooInsertProductos.add(discvProducto);
-                        
+                        if(productoNuevo){
+                            odooInsertProductos.add(discvProducto);
+                        }else{
+                            odooCreateProductos.add(discvProducto);
+                        }
                     }
                 }
                 
+                // RECORRIDO DE PRODUCTOS DE ODOO
+                // Se valida que el producto no este en cola de alguno de los procesos, sino, se da de baja del ODOO.
                 for (Producto odooProducto : odooProductos) {
                     Boolean bandera = false;
                     
@@ -2055,6 +2158,12 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     
                     for (Producto odooInsertProducto : odooInsertProductos) {
                         if(odooProducto.getReferenciaInterna().equals(odooInsertProducto.getReferenciaInterna())){
+                            bandera = true;
+                        }
+                    }
+                    
+                    for (Producto odooCreateProducto : odooCreateProductos) {
+                        if(odooProducto.getReferenciaInterna().equals(odooCreateProducto.getReferenciaInterna())){
                             bandera = true;
                         }
                     }
@@ -2073,6 +2182,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 
                 /************ RECORRIDO DE LISTAS *****************/
                 System.out.println("\tSINCORNIZACION");
+                
                 // PRODUCTOS A DESPUBLICAR
                 for (Producto odooDeleteProducto : odooDeleteProductos) {
                     odooWriteIDs.add(odooDeleteProducto.getID());
@@ -2091,11 +2201,69 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
+                // PRODUCTOS A INSERTAR 
+                Integer contadorInsert = 0;
+                for (Producto odooInsertProducto : odooInsertProductos) {
+                    try {
+                        // SE CREA UN NUEVO PRODUCTO
+                        odooID = (Integer) odooCliente.execute(odooConfigObject, "execute_kw",
+                                asList(odooDB, odooUID, odooPassword, "product.product",
+                                        "create", asList( 
+                                                new HashMap(){{
+                                                    put("default_code", odooInsertProducto.getReferenciaInterna());
+                                                    put("name", odooInsertProducto.getNombre());
+                                                    put("list_price", odooInsertProducto.getPrecioVenta());
+                                                    put("standard_price", odooInsertProducto.getPrecioCosto());
+                                                    put("is_published", odooInsertProducto.getPublicado());
+                                                    put("website_id", odooInsertProducto.getWebsite().getID());
+                                                    if(odooInsertProducto.getCategorias() != null){
+                                                        put("public_categ_ids",odooInsertProducto.getArrayCategorias());
+                                                    }
+                                                }}
+                                                )
+                                )
+                        );
+                        // SE LEE EL PRODUCTO PREVIAMENTE CREADO
+                        odooRegistros = asList((Object[]) odooCliente.execute(
+                                odooConfigObject, "execute_kw", asList(odooDB, odooUID, odooPassword, "product.product", 
+                                        "read", asList((odooID))
+                                )
+                        ));
+                        // SE ACTUALIZAN SUS ATRIBUTOS
+                        for (Object odooRegistro : odooRegistros) {
+                            HashMap registroP = (HashMap) odooRegistro;
+                            Integer product_tmpl_id = Integer.valueOf(((Object[]) registroP.get("product_tmpl_id"))[0].toString());
+                            
+                            System.out.print("PRODUCTO_ID: "+ registroP.get("id") + "\tNAME: "+registroP.get("name")+"\tTEMPLATE_ID: "+product_tmpl_id);
+                            System.out.println("\tATTRIBUTE_ID: "+ odooInsertProducto.getTamanho().getIdAtributo() + "\tVALUE_ID: "+odooInsertProducto.getTamanho().getIdValor());
+                            
+                            Integer product_tmpl_attribute_id = (Integer) odooCliente.execute(odooConfigObject, "execute_kw",
+                                asList(odooDB, odooUID, odooPassword, "product.template.attribute.line",
+                                    "create", asList(//
+                                        new HashMap(){{
+                                            put("product_tmpl_id", product_tmpl_id);
+                                            put("attribute_id", odooInsertProducto.getTamanho().getIdAtributo());
+                                            put("value_ids",asList(odooInsertProducto.getTamanho().getIdValor()));
+                                        }}
+                                    )
+                                )
+                            );
+                        }
+                        
+                        contadorInsert++;
+                        
+                    } catch (XmlRpcException ex) {
+                        Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                System.out.println("Se insertaron "+contadorInsert+" de "+odooInsertProductos.size()+" productos.");
+                
+                
                 // PRODUCTOS A ACTUALIZAR
                 Integer contadorUpdate = 0;
                 for (Producto odooUpdateProducto : odooUpdateProductos) {
                     try {
-                        //odooUpdateProducto.imprimir();
+                        odooUpdateProducto.imprimir();
                         odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
                                 asList(odooDB, odooUID, odooPassword, "product.product",
                                         "write", asList(asList(odooUpdateProducto.getID()), 
@@ -2115,6 +2283,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         );
                          
                         
+                        
                         //ACTUALIZAR product.template.attribute.line con los TAMANHOS del PRODUCTO
                         //LISTAR TAMAÑOS
                         //ACTUALIZAR TAMANHOS
@@ -2128,45 +2297,90 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 }
                 System.out.println("Se actualizaron "+contadorUpdate+" de "+odooUpdateProductos.size()+" productos.");
                 
-                
-                // PRODUCTOS A NADIE NONE
-                System.out.println("Se obviaron "+odooNoneProductos.size()+" productos.");
-                
-                // PRODUCTOS A INSERTAR 
-                Integer contadorInsert = 0;
-                for (Producto odooInsertProducto : odooInsertProductos) {
+                // PRODUCTOS CON NUEVAS VARIANTES
+                Integer contadorCreate = 0;
+                List<Integer> tamanhosTemplate = new ArrayList();
+                List<Integer> idsConTemplate = new ArrayList();
+                for (Producto odooCreateProducto : odooCreateProductos) {
                     try {
-                        //odooInsertProducto.imprimir();
-                        odooID = (Integer) odooCliente.execute(odooConfigObject, "execute_kw",
-                                asList(odooDB, odooUID, odooPassword, "product.product",
-                                        "create", asList( 
-                                                new HashMap(){{
-                                                    put("default_code", odooInsertProducto.getReferenciaInterna());
-                                                    put("name", odooInsertProducto.getNombre());
-                                                    put("list_price", odooInsertProducto.getPrecioVenta());
-                                                    put("standard_price", odooInsertProducto.getPrecioCosto());
-                                                    put("is_published", odooInsertProducto.getPublicado());
-                                                    put("website_id", odooInsertProducto.getWebsite().getID());
-                                                    if(odooInsertProducto.getCategorias() != null){
-                                                        put("public_categ_ids",odooInsertProducto.getArrayCategorias());
-                                                    }
-                                                }}
-                                                )
+                        odooCreateProducto.imprimir();
+                        // SE LEE EL PRODUCTO PREVIAMENTE CREADO
+                        odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
+                                asList(odooDB, odooUID, odooPassword, "product.product", 
+                                "search_read", asList(asList(asList("default_code", "=", odooCreateProducto.getReferenciaInterna()))),emptyMap()
                                 )
-                        );
-                       
-                        //ACTUALIZAR product.template.attribute.line con los TAMANHOS del PRODUCTO
-                        //LISTAR TAMAÑOS
-                        //ACTUALIZAR TAMANHOS
+                        ));
+                        HashMap registroP = (HashMap) odooRegistros.get(0);
+                        Integer product_tmpl_id = Integer.valueOf(((Object[]) registroP.get("product_tmpl_id"))[0].toString());
                         
-                        if(odooID instanceof Integer){
-                            contadorInsert++;
+                        
+                        // PROCESAR LISTA DE TAMAÑOS
+                        odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
+                                asList(odooDB, odooUID, odooPassword, "product.template.attribute.line", 
+                                "search_read", asList(asList(asList("product_tmpl_id", "=", product_tmpl_id))),emptyMap()
+                                )
+                        ));
+                        HashMap registroPT = (HashMap) odooRegistros.get(0);
+                        
+                        for (Object object : (Object[]) registroPT.get("value_ids")) {
+                            //System.out.println("VALUE ID: "+object);
+                            tamanhosTemplate.add((Integer) object);
+                        }
+                        
+                        tamanhosTemplate.add(odooCreateProducto.getTamanho().getIdValor());
+                        
+                        Boolean writeAL = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
+                            asList(odooDB, odooUID, odooPassword, "product.template.attribute.line",
+                                "write", asList(asList(registroPT.get("id")),
+                                    new HashMap(){{
+                                        put("product_tmpl_id", product_tmpl_id);
+                                        put("attribute_id", odooCreateProducto.getTamanho().getIdAtributo());
+                                        put("value_ids",tamanhosTemplate);
+                                    }}
+                                )
+                            )
+                        );
+                        
+                        odooRegistros = asList((Object[]) odooCliente.execute(odooConfigObject, "execute_kw", 
+                                asList(odooDB, odooUID, odooPassword, "product.product", 
+                                "search_read", asList(asList(asList("product_tmpl_id", "=", product_tmpl_id))),emptyMap()
+                                )
+                        ));
+                        
+                        for (Object odooRegistro : odooRegistros) {
+                            HashMap registro = (HashMap) odooRegistro;
+                            idsConTemplate.add((Integer) registro.get("id"));
+                        }
+                        
+                        for (Integer integer : idsConTemplate) {
+                            Boolean writeP = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
+                                asList(odooDB, odooUID, odooPassword, "product.product",
+                                    "write", asList(asList(integer),
+                                        new HashMap(){{
+                                            put("default_code", odooCreateProducto.getReferenciaInterna());
+                                            put("standard_price",odooCreateProducto.getPrecioCosto());
+                                        }}
+                                    )
+                                )
+                            );
+                        }
+                        
+                        
+                         
+                        
+                        if(odooBandera){
+                            contadorCreate++;
                         }
                     } catch (XmlRpcException ex) {
                         Logger.getLogger(aProductos.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                System.out.println("Se insertaron "+contadorInsert+" de "+odooInsertProductos.size()+" productos.");
+                System.out.println("Se extendieron "+contadorCreate+" variantes de "+odooCreateProductos.size()+" productos.");
+                
+                
+                // PRODUCTOS A NADIE NONE
+                System.out.println("Se obviaron "+odooNoneProductos.size()+" productos.");
+                
                 
                 
             }else{
@@ -2371,12 +2585,28 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 
                 
             //ACTUALIZAR ATRIBUTOS    
+                // DEBERIA USARSE WRITE CUANDO EL PRODUCTO YA TIENE VARIANTES
+                /* 
                 Boolean creo = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
                     asList(odooDB, odooUID, odooPassword, "product.template.attribute.line",
-                        "write", asList(asList(54),
+                        "write", asList(asList(54),//Es ID se extrae del modelo previamente
                             new HashMap(){{
                                 put("product_tmpl_id", product_tmpl_id);
                                 put("attribute_id", asList(1));
+                                put("value_ids", asList(7));
+                            }}
+                        )
+                    )
+                );
+                */
+                
+                //DEBERIA USARSE CREATE CUANDO ES LA PRIMERA VEZ DE UN PRODUCTO
+                Integer id = (Integer) odooCliente.execute(odooConfigObject, "execute_kw",
+                    asList(odooDB, odooUID, odooPassword, "product.template.attribute.line",
+                        "create", asList(//
+                            new HashMap(){{
+                                put("product_tmpl_id", product_tmpl_id);
+                                put("attribute_id", 1);
                                 put("value_ids", asList(7));
                             }}
                         )

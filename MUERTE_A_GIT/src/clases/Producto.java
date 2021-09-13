@@ -13,9 +13,10 @@ import java.util.List;
  */
 public class Producto {
     private Integer ID;
+    private String codigoDISCV;
     private String referenciaInterna;
     private Categoria[] categorias;
-    private List<Tamanho> tamanho;
+    private Tamanho tamanho;
     private Website website;
     private Boolean publicado;
     
@@ -43,6 +44,14 @@ public class Producto {
         this.ID = id;
     }
 
+    public String getCodigoDISCV() {
+        return codigoDISCV;
+    }
+
+    public void setCodigoDISCV(String codigoDISCV) {
+        this.codigoDISCV = codigoDISCV;
+    }
+    
     public String getReferenciaInterna() {
         return referenciaInterna;
     }
@@ -59,11 +68,11 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public List<Tamanho> getTamanho() {
+    public Tamanho getTamanho() {
         return tamanho;
     }
 
-    public void setTamanho(List<Tamanho> tamanho) {
+    public void setTamanho(Tamanho tamanho) {
         this.tamanho = tamanho;
     }
 
@@ -200,9 +209,8 @@ public class Producto {
                 System.out.println("public_categ_ids: "+categoria.getID());
             }
         if(this.getTamanho() != null){
-            for (Tamanho tamanio : this.getTamanho()) {
-                System.out.println("atributte_line_ids: "+tamanio.getID());
-            }
+            System.out.println("atributte_line_ids: "+getTamanho().getIdValor());
+            
         }
         
         System.out.println("website_id: "+this.getWebsite().getID());

@@ -330,13 +330,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
 
                 for (Producto discvProducto : discvProductos) {
                     if(discvProducto != null){
-                        if(discvProducto.getReferenciaInterna().equals(registro[0].toString().substring(0, 11))){
+                        if(discvProducto.getReferenciaInterna().equals(registro[0].toString())){
                             bandera = true;
                             //REGISTRAR SOLO EL TAMAÑNO
 
                             for (Tamanho odooTamanho : odooTamanhos) {    
                                 // ACA NOS QUEDMAOS
-                                if(tamanhoDISCV.equals(odooTamanho.getNombre())){
+                                if(tamanhoDISCV.equals(odooTamanho.getID())){
                                     discvProductos[registros].getTamanho().add(odooTamanho);
                                 }
                             }
@@ -1359,14 +1359,15 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(5, 5, 5)
                 .addComponent(jTabbedPane1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(eMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -2107,10 +2108,12 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                     put("website_id", odooUpdateProducto.getWebsite().getID());
                                                     if(odooUpdateProducto.getCategorias() != null)
                                                         put("public_categ_ids",odooUpdateProducto.getArrayCategorias());
+                                                   
                                                 }}
                                                 )
                                 )
                         );
+                         
                         
                         //ACTUALIZAR product.template.attribute.line con los TAMANHOS del PRODUCTO
                         //LISTAR TAMAÑOS
@@ -2151,7 +2154,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                                 )
                                 )
                         );
-                        
+                       
                         //ACTUALIZAR product.template.attribute.line con los TAMANHOS del PRODUCTO
                         //LISTAR TAMAÑOS
                         //ACTUALIZAR TAMANHOS
@@ -2370,11 +2373,11 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             //ACTUALIZAR ATRIBUTOS    
                 Boolean creo = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
                     asList(odooDB, odooUID, odooPassword, "product.template.attribute.line",
-                        "write", asList(asList(47),
+                        "write", asList(asList(54),
                             new HashMap(){{
                                 put("product_tmpl_id", product_tmpl_id);
-                                put("attribute_id", 2);
-                                put("value_ids", asList(5,6));
+                                put("attribute_id", asList(1));
+                                put("value_ids", asList(7));
                             }}
                         )
                     )

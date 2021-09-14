@@ -81,6 +81,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
     
     private List<Producto> odooUpdateProductos;
     private List<Producto> odooInsertProductos;
+    private List<Producto> odooTamanhosExtras;
     private List<Producto> odooCreateProductos;
     private List<Producto> odooDeleteProductos;
     private List<Producto> odooNoneProductos;
@@ -311,7 +312,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         
         // VERIFICAR QUE TODOS LOS TAMAÑOS DE DISCOVERY, EXISTAN EN ODOO
         // ESTO NO FUNCIONA
-        List<String> nuevosTamanhos = new ArrayList();
+        /* List<String> nuevosTamanhos = new ArrayList();
         Boolean nuevoTamanho;
         for (Object[] registro : datosEnProceso) {
             for (Tamanho odooTamanho : odooTamanhos) {
@@ -329,7 +330,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             
         }
         
-        
+        */
         
         //LIMPIEZA DE ARRAY
         for (Object[] registro : datosEnProceso) {
@@ -399,7 +400,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         
         
         //ARMADO DE TABLE MODEL
-        discvTablaContenido = new Object[registros][10];
+        discvTablaContenido = new Object[registros][11];
         Integer linea = 0;
         for (Producto discvProducto : discvProductos) {
             discvTablaContenido[linea][0] = discvProducto.getCodigoDISCV();
@@ -409,14 +410,19 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             }else{
                 System.out.println("En ODOO no existe el tamaño del producto: "+discvProducto.getReferenciaInterna());
             }
+            if(discvProducto.getTamanho() == null){
+            discvTablaContenido[linea][0] = discvProducto.getCodigoDISCV();
+            discvTablaContenido[linea][1] = discvProducto.getReferenciaInterna();
+            discvTablaContenido[linea][3] = discvProducto.getCodigoDISCV().substring(11, 13);
+            }
             
-            discvTablaContenido[linea][3] = discvProducto.getNombre();
-            discvTablaContenido[linea][4] = discvProducto.getPrecioVenta();
-            discvTablaContenido[linea][5] = discvProducto.getPrecioCosto();
-            discvTablaContenido[linea][6] = discvProducto.getStockTotal();
-            discvTablaContenido[linea][7] = discvProducto.getStockSucursal();
-            discvTablaContenido[linea][8] = discvProducto.getWebsite().getNombre();
-            discvTablaContenido[linea][9] = discvProducto.getCategorias()[0].getNombre();
+            discvTablaContenido[linea][4] = discvProducto.getNombre();
+            discvTablaContenido[linea][5] = discvProducto.getPrecioVenta();
+            discvTablaContenido[linea][6] = discvProducto.getPrecioCosto();
+            discvTablaContenido[linea][7] = discvProducto.getStockTotal();
+            discvTablaContenido[linea][8] = discvProducto.getStockSucursal();
+            discvTablaContenido[linea][9] = discvProducto.getWebsite().getNombre();
+            discvTablaContenido[linea][10] = discvProducto.getCategorias()[0].getNombre();
             
             
             linea++;
@@ -426,7 +432,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         DefaultTableModel modelo = new DefaultTableModel(
                 discvTablaContenido, 
         new String [] {
-                "Codigo", "Ref. Int.","Tamaño", "Descripcion", "Venta", "Costo", "StockTotal", "StockSucursal", "WebSite", "Categoria"
+                "Codigo", "Ref. Int.","Tamaño","T. Faltante", "Descripcion", "Venta", "Costo", "StockTotal", "StockSucursal", "WebSite", "Categoria"
             });
         TableRowSorter<TableModel> sorter = new TableRowSorter<>((TableModel) modelo);
         sorter.toggleSortOrder(1);
@@ -437,6 +443,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
 
         
     }
+
     
     public void limpiar(Boolean full){
         if(full){
@@ -708,7 +715,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 739, Short.MAX_VALUE)
+                    .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -790,7 +797,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         .addComponent(tMaestroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(bSeleccionarMaestroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(75, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -835,7 +842,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1026,7 +1033,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
                         .addComponent(tOdooVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 42, Short.MAX_VALUE))
+                        .addGap(0, 61, Short.MAX_VALUE))
                     .addComponent(tOdooTestModeloInsertNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1187,7 +1194,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                             .addGroup(jPanel7Layout.createSequentialGroup()
                                 .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(tOdooTestModeloInsertNombre1, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
+                                .addComponent(tOdooTestModeloInsertNombre1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
                             .addGroup(jPanel7Layout.createSequentialGroup()
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1235,7 +1242,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1341,7 +1348,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 427, Short.MAX_VALUE))
+                                .addGap(0, 447, Short.MAX_VALUE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -1350,7 +1357,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         .addGap(11, 11, 11)
                         .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(lSexo, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)))
+                        .addComponent(lSexo, javax.swing.GroupLayout.DEFAULT_SIZE, 660, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -1401,17 +1408,15 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE))
+                .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
                 .addContainerGap())
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
                 .addComponent(jTabbedPane1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(11, 11, 11)
                 .addComponent(eMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -2087,6 +2092,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         if(odooProductos != null){
             if(discvProductos != null){
                 odooUpdateProductos = new ArrayList<> (); 
+                odooTamanhosExtras = new ArrayList<> (); 
                 odooInsertProductos = new ArrayList<> (); 
                 odooCreateProductos = new ArrayList<> (); //Nuevas variantes
                 odooDeleteProductos = new ArrayList<> (); 
@@ -2106,10 +2112,13 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                             if(discvProducto.getTamanho().getNombre().equals(odooProducto.getTamanho().getNombre())){
                                 // SI CORRESPONDE REFERENCIA Y TAMAÑO
                                 productoNuevo = false;
-                                System.out.println("PRODUCTO ENCONTRADO EN ODOO.");
+                              //  System.out.println("PRODUCTO ENCONTRADO EN ODOO.");
                                 // URGENTE MEJORAR ESTE DISPARATE
+                          
+                             {   
                                 if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
                                     odooNoneProductos.add(odooProducto);
+                                
                                 }else if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && !odooProducto.getPublicado()){
                                     odooProducto.setPublicado(true);
                                     odooProducto.setCategorias(discvProducto.getCategorias());
@@ -2125,7 +2134,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                 }else{
                                     odooNoneProductos.add(odooProducto);
                                 }
-                            }
+                            }}
+                        
                         }
                     }
                     
@@ -2136,8 +2146,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                 productoNuevo = false;
                             }
                         }
-                        
-                        if(productoNuevo){
+                       if(productoNuevo){
                             odooInsertProductos.add(discvProducto);
                         }else{
                             odooCreateProductos.add(discvProducto);
@@ -2152,6 +2161,11 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     
                     for (Producto odooUpdateProducto : odooUpdateProductos) {
                         if(odooProducto.getReferenciaInterna().equals(odooUpdateProducto.getReferenciaInterna())){
+                            bandera = true;
+                        }
+                    }
+                     for (Producto odooTamanhoExtra : odooTamanhosExtras) {
+                        if(odooProducto.getReferenciaInterna().equals(odooTamanhoExtra.getReferenciaInterna())){
                             bandera = true;
                         }
                     }
@@ -2248,8 +2262,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                                     )
                                 )
                             );
+                            
                         }
-                        
                         contadorInsert++;
                         
                     } catch (XmlRpcException ex) {

@@ -2143,7 +2143,10 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     }
                     
                     if(productoNuevo){
+                        
                         odooInsertProductos.add(discvProducto);
+                        
+                        
                     }
                     
                     if(productoVarianteNueva){
@@ -2160,7 +2163,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     
                     for (Producto odooUpdateProducto : odooUpdateProductos) {
                         if(odooProducto.getReferenciaInterna().equals(odooUpdateProducto.getReferenciaInterna())){
-                       
+                            
                             bandera = true;
                         }
                     }

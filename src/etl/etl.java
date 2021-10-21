@@ -6,8 +6,10 @@
 package etl;
 
 import etl.archivos.aProductos;
+import com.formdev.flatlaf.IntelliJTheme;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyVetoException;
@@ -24,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import system.Consola;
 
 /**
@@ -304,6 +307,11 @@ public class etl extends JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+         IntelliJTheme.install( etl.class.getResourceAsStream("/json/Hiberbee.theme.json" ) );
+        
+        Font font = UIManager.getFont("TableHeader.font");
+        font = font.deriveFont(10f);
+        UIManager.put("TableHeader.font", font);
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

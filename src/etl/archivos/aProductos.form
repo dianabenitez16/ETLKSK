@@ -82,7 +82,7 @@
                                   <Component id="tDeposito" min="-2" max="-2" attributes="0"/>
                                   <Component id="tCantidadMinima" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="390" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="bExtraer" alignment="1" max="-2" attributes="0"/>
                                   <Component id="bExtraer1" alignment="1" max="-2" attributes="0"/>
@@ -188,6 +188,9 @@
                   <Dimension value="[80, 25]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tCantidadMinimaActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="bExtraer1">
               <Properties>

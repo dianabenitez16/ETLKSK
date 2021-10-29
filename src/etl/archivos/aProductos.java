@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
@@ -206,7 +207,20 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             }
         });
     }
-    
+   /* void mostrar(String buscar) {
+        try {
+            DefaultTableModel modelo;
+            Producto func = new Producto();
+            modelo = func.mostrar(buscar);
+
+            tProductos.setModel(modelo);
+           // ocultar_columnas();
+          //  lblTotalRegistros.setText("Total Registros" + Integer.toString(func.totalRegistros));
+        } catch (Exception e) {
+            JOptionPane.showConfirmDialog(rootPane, e);
+        }
+    }
+    */
     public void extraerDatos(){
         limpiar(false);
                 
@@ -402,6 +416,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     discvProductos[productosCreados].setActivo(true);
                 }else{
                     discvProductos[productosCreados].setActivo(false);
+                
                 }
 
                 for (Website odooWebsite : odooWebsites) {
@@ -466,6 +481,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         sorter.toggleSortOrder(1);
         tProductos.setModel(modelo);
         tProductos.setRowSorter(sorter);
+   
         
         eMensaje.setText("De los "+SWDVY.consultar.datatypes.length+" registros, se filtraron "+productosCreados+" productos.");
 
@@ -727,6 +743,11 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jLabel19.setPreferredSize(new java.awt.Dimension(120, 25));
 
         tCantidadMinima.setPreferredSize(new java.awt.Dimension(80, 25));
+        tCantidadMinima.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tCantidadMinimaActionPerformed(evt);
+            }
+        });
 
         bExtraer1.setText("Sincronizar");
         bExtraer1.setPreferredSize(new java.awt.Dimension(120, 25));
@@ -752,7 +773,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(tDeposito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(tCantidadMinima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 390, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(bExtraer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(bExtraer1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -1652,6 +1673,10 @@ odooProductosSincronizar();
         odooInsertarPython();
     }//GEN-LAST:event_bOdooTestModeloListar5ActionPerformed
 
+    private void tCantidadMinimaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tCantidadMinimaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tCantidadMinimaActionPerformed
+
     private void odooImprimirRespuesta(HashMap respuesta){
         for (int i = 0; i < respuesta.size(); i++) {
             taDebug.append(respuesta.get(i).toString());
@@ -1858,6 +1883,7 @@ odooProductosSincronizar();
                                         "name", 
                                         "list_price",
                                         "standard_price",
+                                        "website_visibility",
                                         "public_categ_ids",
                                         "has_configurable_attributes",
                                         "product_template_attribute_value_ids",
@@ -1926,7 +1952,7 @@ odooProductosSincronizar();
                         producto.setTamanho(tamanho);
                         producto.setWebsite(websiteV); 
                         producto.setPublicado((Boolean) registroP.get("is_published"));
-                        producto.setActivo((Boolean) registroP.get("active"));
+                        producto.setActivo((Boolean) registroP.get("website_visibility"));
                         odooProductos[linea] = producto;
                         linea++;
                     }
@@ -2134,6 +2160,8 @@ odooProductosSincronizar();
     }
     
     private void odooProductosSincronizar(){
+    
+        
         odooModeloListarT();
         if(odooProductos != null){
             if(discvProductos != null){
@@ -2153,7 +2181,7 @@ odooProductosSincronizar();
                 for (Producto discvProducto : discvProductos) {
                     productoNuevo = true;
                     productoVarianteNueva = true;
-                    activo = true;
+                    activo = false;
                     // Se determina si es un podructo nuevo, o si ya existe.
                     for (Producto odooProducto : odooProductos) {                        
                         if(discvProducto.getReferenciaInterna().equals(odooProducto.getReferenciaInterna())){
@@ -2161,20 +2189,24 @@ odooProductosSincronizar();
                             if(discvProducto.getTamanho().getNombre().equals(odooProducto.getTamanho().getNombre())){
                                 productoVarianteNueva = false;
                                 // Se analiza si se deja como esta, o si hay que despublicar o no por falta de stock.
-                                if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado()){
+                                if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado() && odooProducto.getActivo()){
                                     odooNoneProductos.add(odooProducto);
-                                }else if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && !odooProducto.getPublicado() && !odooProducto.getActivo()){
+                                }else if(discvProducto.getStockSucursal() >= Integer.valueOf(tCantidadMinima.getText()) && !odooProducto.getActivo()){
                                     odooProducto.setPublicado(true);
                                     odooProducto.setActivo(true);
                                     odooProducto.setCategorias(discvProducto.getCategorias());
                                     odooProducto.setTamanho(discvProducto.getTamanho());
+                                    activo = true;
+                                    productoNuevo = false;
                                     odooUpdateProductos.add(odooProducto);
-                                }else if(discvProducto.getStockSucursal() < Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getPublicado() && odooProducto.getActivo()){
+                                }else if(discvProducto.getStockSucursal() < Integer.valueOf(tCantidadMinima.getText()) && odooProducto.getActivo()){
                                     odooProducto.setPublicado(true);
                                     odooProducto.setActivo(false);
                                     odooProducto.setCategorias(discvProducto.getCategorias());
                                     odooProducto.setTamanho(discvProducto.getTamanho());
+                                    productoNuevo = false;
                                     odooUpdateProductos.add(odooProducto);
+                                    
                                 }else{
                                     odooNoneProductos.add(odooProducto);
                                 }
@@ -2195,11 +2227,8 @@ odooProductosSincronizar();
                         }
                     }
                     
-                    if(productoNuevo){
-                        
+                    if(productoNuevo){                        
                         odooInsertProductos.add(discvProducto);
-                        
-                        
                     }
                     
                     if(productoVarianteNueva){
@@ -2222,7 +2251,7 @@ odooProductosSincronizar();
                     }
                     
                     for (Producto odooInsertProducto : odooInsertProductos) {
-                        if(odooProducto.getReferenciaInterna().equals(odooInsertProducto.getReferenciaInterna())){
+                        if(odooProducto.getReferenciaInterna().equals(odooInsertProducto.getReferenciaInterna()) && odooProducto.getTamanho().equals(odooInsertProducto.getTamanho())){
                             bandera = true;
                         }
                     }
@@ -2260,7 +2289,7 @@ odooProductosSincronizar();
                             asList(odooDB, odooUID, odooPassword, "product.product",
                                     "write", asList(odooDeleteIDs, 
                                             new HashMap(){{
-                                                put("active", false);
+                                                put("website_visibility", false);
                                     }})
                             )
                     );
@@ -2271,9 +2300,12 @@ odooProductosSincronizar();
                 System.out.println("");
                 
                 // PRODUCTOS A INSERTAR 
+               
+                
                 Integer contadorInsert = 0;
                 for (Producto odooInsertProducto : odooInsertProductos) {
                     try {
+                         
                         // SE CREA UN NUEVO PRODUCTO
                         odooID = (Integer) odooCliente.execute(odooConfigObject, "execute_kw",
                                 asList(odooDB, odooUID, odooPassword, "product.product",
@@ -2284,7 +2316,7 @@ odooProductosSincronizar();
                                                     put("list_price", odooInsertProducto.getPrecioVenta());
                                                     put("standard_price", odooInsertProducto.getPrecioCosto());
                                                     put("is_published", odooInsertProducto.getPublicado());
-                                                    put("active", odooInsertProducto.getActivo());
+                                                    put("website_visibility", odooInsertProducto.getActivo());
                                                     put("website_id", odooInsertProducto.getWebsite().getID());
                                                     if(odooInsertProducto.getCategorias() != null){
                                                         put("public_categ_ids",odooInsertProducto.getArrayCategorias());
@@ -2349,6 +2381,7 @@ odooProductosSincronizar();
                 Integer contadorUpdate = 0;
                 for (Producto odooUpdateProducto : odooUpdateProductos) {
                     try {
+                       
                         //odooUpdateProducto.imprimir();
                         odooBandera = (Boolean) odooCliente.execute(odooConfigObject, "execute_kw",
                                 asList(odooDB, odooUID, odooPassword, "product.product",
@@ -2359,7 +2392,7 @@ odooProductosSincronizar();
                                                     put("list_price", odooUpdateProducto.getPrecioVenta());
                                                     put("standard_price", odooUpdateProducto.getPrecioCosto());
                                                     put("is_published", odooUpdateProducto.getPublicado());
-                                                    //put("active", odooUpdateProducto.getActivo());
+                                                    put("website_visibility", odooUpdateProducto.getActivo());
                                                     put("website_id", odooUpdateProducto.getWebsite().getID());
                                                     if(odooUpdateProducto.getCategorias() != null)
                                                         put("public_categ_ids",odooUpdateProducto.getArrayCategorias());

@@ -118,7 +118,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         odooStart();
         odooLogin();
         
-        j_pro.setMaximum(100);
+       
         
         odooMaestrosEcommerce();
         odooModeloListarVariantes();
@@ -634,7 +634,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
         jLabel19 = new javax.swing.JLabel();
         tCantidadMinima = new javax.swing.JTextField();
         bExtraer1 = new javax.swing.JButton();
-        j_pro = new javax.swing.JProgressBar();
         jPanel3 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         tMaestroCategoriasEcommerce = new javax.swing.JTextField();
@@ -764,7 +763,7 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 739, Short.MAX_VALUE)
+                    .addComponent(spProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -778,10 +777,6 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                             .addComponent(bExtraer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(bExtraer1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(10, 10, 10))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(j_pro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -797,10 +792,9 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(tCantidadMinima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addComponent(spProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17)
-                .addComponent(j_pro, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39))
         );
 
         jTabbedPane1.addTab("Discovery", jPanel1);
@@ -1464,8 +1458,8 @@ public class aProductos extends javax.swing.JInternalFrame implements PropertyCh
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE))
+                    .addComponent(eMensaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1518,8 +1512,6 @@ extraerDatos();
     private void bExtraer1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExtraer1ActionPerformed
 odooProductosSincronizar();
            
-            Worker  worker = new Worker (j_pro);
-            worker.execute();
     }//GEN-LAST:event_bExtraer1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -3097,7 +3089,6 @@ odooProductosSincronizar();
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JProgressBar j_pro;
     private javax.swing.JLabel lAnho;
     private javax.swing.JLabel lColor;
     private javax.swing.JLabel lNombre;
